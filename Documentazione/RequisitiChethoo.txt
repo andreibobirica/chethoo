@@ -1,0 +1,167 @@
+
+
+Sommario
+Introduzione	1
+Dettaglio	2
+Autentificazione	2
+Pagina Commerciante	2
+Pannello di controllo commerciante	3
+Inserzioni	4
+Pagina di ricerca	4
+Messaggi da utenti verso commercianti	4
+Sistema di pagamento	5
+Sistema pubblicitario interno	5
+Core del sito	5
+Punti necessari di ricerca e sviluppo	6
+
+
+Introduzione V0.1
+Serve realizzare una piattaforma simile ad autoscout24 o subito.it
+Capace di ospitare 3 tipologie di utenti, l?Amministratore della piattaforma, gli utenti normali che visualizzano le inserzioni e i rivenditori detti anche concessionarie detti anche aziende detti anche commercianti.
+La piattaforma a differenza di subito.it non cerca di offrire spazio per inserzioni per privati, gli unici possibili inserzionisti sono aziende.
+
+L?obbiettivo della piattaforma ä quello di dare uno spazio ai commercianti in cui possano esibire le loro inserzioni ma che a differenza di autoscout 24 o subito, questo spazio ne risalti la loro immagine e il loro potenziale, lasciando nella memoria del potenziale acquirente il ricordo del nome del commerciante, e non eventualmente del sito.
+
+Le possibili inserzioni al momento devono trattare solo auto e moto.
+ä necessaria la creazione di un metodo di autentificazione, sia per gli utenti normali che per le aziende. Il metodo di autentificazione deve essere fatto tramite email e password, sono escluse modalitÖ come oauth google o facebook.
+
+Un utente normale deve essere in grado di visualizzare le inserzioni, fare una ricerca, salvare una inserzione , contattare il venditore.
+Un utente commerciante deve essere in grado di avere una piattaforma in cui caricare inserzioni, modificare le informazioni connesse e visualizzare i messaggi degli utenti.
+La piattaforma inizialmente sarÖ gratis, e fornirÖ un certo numero di annunci gratis ai commercianti, per chi volesse superare questo numero di annunci sarÖ possibile acquistare dei pacchetti mensili con cui verrÖ data la possibilitÖ di avere vantaggi e superare il limite imposto.
+
+La piattaforma deve quindi avere un metodo di autentificazione sicuro, una procedura di recupero password.
+Deve inoltre garantire la ricerca degli annunci, la loro visualizzazione sommaria o unitaria.
+Da parte dei commercianti deve esserci un sistema in grado di creare, modificare o eliminare gli annunci.
+Deve essere presente una pagina venditore in cui sono visualizzabili le inserzioni di un certo commerciante.
+Deve essere presente un sistema Analistics per i commercianti.
+Deve essere presente un sistema di pagamento di pacchetti in abbonamento per i commercianti.
+Deve essere presente un sistema di mailing list, in base alla quale sottoscrizione, permetta di garantire pregi.
+
+
+
+Dettaglio
+Autentificazione
+Il processo di autentificazione deve essere fatto tramite email e password.
+Per la registrazione sono richiesti diversi campi in base alla tipologia di utente richiesta.
+Per un utente normale sono richieste le classiche informazioni standard Nome, Cognome, email numero di telefono, LOCALITA O CAP, password.
+ä necessario memorizzare la localitÖ o il cap, in modo da poter reindirizzare le sue ricerche verso inserzioni in ordine di vicinanza.
+Per un utente normale non sono richieste informazioni di pagamento, non ä previsto sia un utente in grado di fare transazioni, e nemmeno modificare o alterare parti del sito visivamente.
+
+Per quanto riguarda i commercianti le informazioni richieste per la registrazione sono di vario tipo ma riguardano una natura pió aziendale quindi PI, CF, Sede, PEC, etc.
+Il metodo di autentificazione alla piattaforma ä comunque tramite email e password.
+
+Il terzo tipo di utente deve essere l?amministratore della piattaforma, la sua main page per l?autentificazione ä diversa, e ha un processo di autentificazione diverso.
+Non ä prevista la necessitÖ di avere o distinguere pió amministratori dato che la societÖ avrÖ solamente due soci in grado di accederci.
+
+Di seguito nel documento verranno nominati queste 3 tipologie di utenti come
+Utente normale, Utente, Cliente, Persona, Visualizzatore, Ricercatore.
+Utente venditore, venditore, commerciante, azienda, inserzionista, Concessionaria.
+Amministratore, Admin.
+
+Pagina Commerciante
+Un commerciante ä un soggetto in grado di inserire inserzioni nel sito.
+Ogni commerciante ha a disposizione una sua ?pagina? interpretabile anche come spazio web, ä previsto infatti che tutte le sue inserzioni, oltre che essere mostrate in una pagina di ricerca ai clienti verranno anche archiviate e raggruppate nella sua pagina.
+Avendo il sito un dominio come chethoo.com o chethoo.it (se e solo se sarÖ possibile) , e per esempio avendo un commerciante come nome SUPERCAR, che la sua pagina sia raggiungibile come supercar.chethoo.it.
+In questa pagina saranno visualizzabili tutte le sue inserzioni.
+Questo sottodominio servirÖ per identificare anche le sue inserzioni: supercar.chethoo.it/adv123
+Questa suddetta pagina, deve dare risalto al venditore e deve essere completamente personalizzabile, a partire dall?inserimento di immagini, alla scelta dei colori.
+ä necessario quindi memorizzare queste eventuali informazioni che il commerciante puï scegliere per la sua pagina.
+
+
+
+Pannello di controllo commerciante
+Nel pannello di controllo il commerciante deve essere in grado di inserire, modificare o eliminare inserzioni, ä una pagina che solamente il commerciante riesce ad accedere, qui devono essere presenti informazioni riguardo alle Analistics e inoltre deve essere in grado da qui di gestire a sottoscrizione ai pacchetti in abbonamento della piattaforma.
+Gli abbonamenti possono essere di vari forma, sono di durata mensile, e possono ricevere pagamento semestrale o annuale.
+
+
+
+Inserzioni
+Un annuncio deve essere inserito, modificato, o eliminato da un commerciante.
+Puï riguardare auto o moto, ä necessario avere una base di dati in grado di rappresentare queste realtÖ.
+Il problema principale ä che le suddette auto e moto devono essere sempre aggiornate, ä necessario quindi fare affidamento su un servizio esterno di API che fornisca un database di auto e modo sempre aggiornato. ? stato suggerito di utilizzare AUTOSCOUT24 come fornitore.
+Il commerciante nel processo di creazione della inserzione deve solamente selezionare da delle tendine multivalore il modello/marca della autovettura, immettere altri dati tecnici (ä necessario la loro parametrizzazione in quanto non li si puï raggruppare sotto dettagli), infine ä possibile inserire una descrizione testuale riguardante l?annuncio.
+SarÖ possibile per il commerciante inserire delle immagini riguardante l?annuncio in questione.
+? necessaria una discreta personalizzazione dell?annuncio da parte del commerciante, di nuovo cose come il colore grafico dell?annuncio oppure la contrassegnazione dell?annuncio con messaggi personalizzati. 
+Un annuncio puï essere successivamente modificato, in ogni momento, variando il prezzo del articolo come pió si preferisce, o mostrando messaggi promozionali come ?10% sconto? etc etc, e infine l?annuncio potrÖ essere eliminato in ogni momento.
+Un annuncio potrÖ essere ricercato da un utente normale, che lo cercherÖ tramite parametri normali riguardante l?auto o tramite parametri pió avanzati.
+? necessario a tutti i costi ottimizzare la ricerca, e la sua velocitÖ.
+ä necessario anche trovare un algoritmo efficace per mostrare gli annunci dopo una ricerca in base ad un certo ordine.
+
+Pagina di ricerca
+La pagina di ricerca deve essere la main page, la prima cosa che si visualizza sul sito, deve essere simile ad autoscout24.
+Il punto principale ä che la ricerca deve essere molto semplice, non devono essere richieste subito al utente normale informazioni dettagliate riguardo a cosa sta cercando.
+ä importante tuttavia giÖ da subito mostrare i risultati in base alla posizione del utente, la sua posizione la si puï individuare in varie modalitÖ.
+Una in primis, la meno precisa ä in base al proprio indirizzo IP, la seconda ä chiedente e avendo la geo localizzazione, la terza ä nel caso in cui l?utente sia registrato tramite parametri quali la posizione immessa nel suo profilo, e per ultimo ma anche per maggior importanza il parametro opzionale di ricerca avanzata quale CAP/LocalitÖ.
+Si deve preferire mostrare annunci vicini, rispetto a mostrare annunci vantaggiosi o pió nuovi.
+
+Messaggi da utenti verso commercianti
+Un utente uva volta visualizzato un annuncio deve essere in grado di comunicare con un commerciante, la comunicazione puï avvenire in due sensi, dal utente verso il commerciante ä richiesto che avvenga attraverso la piattaforma, dal commerciante verso l?utente deve avvenire per mezzi privati.
+Deve esserci quindi per il commerciante una pagina dove vengono mostrati tutti i messaggi in arrivï.
+Successivamente, sarÖ quindi il commerciante , che se interessato risponderÖ all?annuncio e comunicherÖ col cliente per mezzi privati opportunamente trasmessi.
+
+Sistema di pagamento
+Il sistema di pagamento deve essere realizzato per garantire un pagamento sicuro ed efficace per i commercianti intenzionati a inserire le inserzioni sulla piattaforma.
+Come prima idea si ä pensato di utilizzare Stripe come API e sistema di pagamento, in modo da garantire ai commercianti l?utilizzo della carta di credito.
+ä escluso il sistema di pagamento paypal.
+? permesso il pagamento tramite bonifico bancario.
+ä esclusa la domiciliazione e addebito diretto bancario (almeno credo).
+In prima battuta devono essere garantiti 2 metodi di pagamento, appunto tramite stripe e tramite bonifico bancario.
+Il primo ä un metodo che permette al commerciante di utilizzare carte di credito, ä necessario realizzare un database in grado di memorizzare le informazioni necessarie al funzionamento delle API di stripe.
+Questo metodo di pagamento ä efficiente ed immediato.
+Il secondo metodo di pagamento ä tramite bonifico bancario, un pagamento che necessita di tempo e della approvazione dell?amministratore del sito.
+
+Sistema pubblicitario interno
+Si devono garantire per il futuro, dei sistemi di pubblicitÖ interni, le aziende automobilistiche potrebbero essere intenzionate a pubblicizzare i loro brand all?interno della piattaforma, si devono quindi creare dei spazi ad hoc, in grado di mostrare i suddetti annunci.
+La grandezza e la immagine degli annunci deve essere predefinita e standard.
+I accordi tra aziende e pagina amministratori avvengono su altre piattaforme e tramite comunicazione email.
+ä L?admin che deve essere in grado di immettere questi annunci.
+I suddetti annunci devono essere mostrati con una data probabilitÖ e in certe fasce orarie, per un certo periodo.
+
+Core del sito
+? necessario dal lato della programmazione, la creazione di un core del sito capace di renderlo pió professionale ed efficiente.
+ä previsto infatti l?utilizzo di PHP, Javascript (Jquery), Html, Bootstrap.
+Si cercherÖ quanto pió possibile di rispettare uno pseudo modello MVC.
+Il backend sarÖ fatto in PHP.
+Il backend si occuperÖ di fornire le View (in HTML) e i dati dei modelli nelle view (in JSON).
+Il frontend sarÖ fatto in HTML, temeplatizzato tramite Boostrap.
+Una view deve solo contenere il codice HTML contenete le View, appunto i diversi componenti della pagina; Abbinata alla view ci sarÖ il codice javascript (interpretabile come controller), il quale codice javascript si occuperÖ di chiedere al backend le informazioni necessarie da riempire nella pagina.
+Le suddette informazioni verranno comunicate tramite JSON.
+? importante non mischiare il ruolo del backend e del frontend.
+Alcuni esempi
+Pagina Lista Annunci dopo una ricerca:
+Backend fornisce le View, contenente solo il codice HTML per i vai componenti della pagina, come i box degli annunci, la navbar, etc etc.
+Viene fornito anche un codice javascript assieme al HTML.
+Il codice javascript viene eseguito, viene chiesto al backend infatti alcuni dati riguardanti i parametri di ricerca immessi precedentemente.
+Il backend dopo aver interrogato il database, fornisce i dati richiesti, i quali in questo esempio sono i vari annunci trovati.
+I dati ricevuti dal frontend vengono immessi nei vari modelli e nelle varie View, inserendo appunto del testo nel codice HTML.
+Successivamente le varie interazioni sulla pagina, non dovranno richiedere le view e i modelli, ma infatti sarÖ solo necessario ripetere pió richieste al backend Dati, e aggiornare la view con i nuovi dati.
+Alcuni esempi sono per esempio quando l?utente scorre in basso, dovranno essere caricati nuovi annunci, l?utente quindi fa implicitamente nuove richieste.
+
+Le criticitÖ di seguire un modello del genere sono varie, sarebbe molto pió facile seguire standard e modelli predefiniti come React o il modello MVC.
+Tuttavia per questioni di tempo, ä meglio far il progetto cosç.
+Le criticitÖ principali possono essere queste:
+Quando viene mostrata una VIEW deve essere mostrata anche con dei dati, precedentemente richiesti.
+Seguendo l?esempio di prima, un utente quando fa una ricerca , implicitamente chiede la View della pagina dei risultati, ma chiede anche i dati con cui riempire la suddetta pagina.
+Un approccio sbagliato che si puï prendere ä passare al codice PHP i dettagli della ricerca, e poi il codice PHP deve costruire un codice javascript , che esegua poi successivamente una richiesta dei dati.
+ä un approccio molto sbagliato e confusionario, un tranello in cui si puï cadere varie volte.
+Ci sono varie soluzioni a questo problema, una tra molte ä quella di unire la pagina della ricerca alla pagina della visualizzazione dei risultati, avendo giÖ le VIEW a disposizione, non si deve chiedere al backend una nuova View , si devono solo chiedere dei dati, e si devono solo mostrare.
+ä un approccio usato nelle webapp.
+
+Un altro approccio ancora potrebbe essere quello di utilizzare le URI per esplicitare eventualmente dopo i dati da chiedere al backend.
+Oppure un altro approccio ancora ä quello di fare due richieste separate, una alla view e una ai dati, e successivamente unirle.
+
+Note Aggiuntive:
+
+Necessaria la creazione di una vetrina , stile prodotti promozionali amazon prime
+
+Punti necessari di ricerca e sviluppo
+- Creare un sistema di subdomain Wildcard con Aruba/Apache
+- Creare un sistema di routing in base al sottodominio e in base ai parametri dopo /
+- Creare un algoritmo capace di ordinare gli annunci in base a parametri di ricerca
+- Creare un sistema di recupero password
+- Cercare un sistema efficiente per gestire la visualizzazione degli annunci, tenendo conto della univocitÖ degli utenti
+- Emailing List/newsletter
+- Gestire un metodo di pagamento
+- Gestione della messaggistica
+- Gestione efficace del caricamento e della memorizzazione delle immagini
+- Gestione del database dei veicoli

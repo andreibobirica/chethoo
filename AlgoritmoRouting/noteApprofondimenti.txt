@@ -1,0 +1,42 @@
+Scoperto che con il servizio di Hosting Aruba , con Hosting linux Basic si ha un cluster di server condiviso, i sottodomini sono acquistabili e 
+per la funzionalità da fare non è realizzabile acquistando questo servizio.
+
+Serve un server dedicato, prese sempre da aruba, sia per gestire questa criticità, che per gestire 
+la mole di lavoro e di carico potenzialmente più grande.
+Il dubbio rimane se con un server dedicato si sarà in grado di mandare MAIL.
+Il dubbio ulteriore è quale server comprare, se CentOS oppure Ubuntu.
+
+Una volta acquistato il server bisogna fare delle modifiche al server Apache, nel file di configurazioni, in particolare:
+conf/httpd.conf
+
+#Alias /bitnami/ "/Applications/XAMPP/xamppfiles/apache2/htdocs/"
+#Alias /bitnami "/Applications/XAMPP/xamppfiles/apache2/htdocs"
+
+#<Directory "/Applications/XAMPP/xamppfiles/apache2/htdocs">
+ #   Options Indexes FollowSymLinks
+  #  AllowOverride All
+  #  Order allow,deny
+ #   Allow from all
+#</Directory>
+
+<VirtualHost chethoo.it:80>
+    DocumentRoot "/Applications/XAMPP/xamppfiles/htdocs"
+    ServerName chethoo.it
+    ServerAlias chethoo.it
+    <Directory "/Applications/XAMPP/xamppfiles/apache2/htdocs">
+        Options -Indexes 
+        Options FollowSymLinks
+        AllowOverride All
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:80>
+    DocumentRoot "/Applications/XAMPP/xamppfiles/htdocs"
+    ServerName chethoo.it
+    ServerAlias *.chethoo.it
+    <Directory "/Applications/XAMPP/xamppfiles/apache2/htdocs">
+        Options -Indexes 
+        Options FollowSymLinks
+        AllowOverride All
+    </Directory>
+</VirtualHost>
