@@ -1,4 +1,17 @@
 <?php
+/**
+ * Classe PathRoute, questa classe si occupa di stoccare delle route di path.
+ * Una RoutePath è una funzione da eseguire nel caso la path del URL venga corrisposta.
+ * All'interno del array $routes vengono appunto memorizzate tante RoutePath
+ * Una RoutePath ha una espressione che contradistingue la URI, una funzione da eseguire, e un metodo con cui
+ * la richiesta alla URI è stata invocata.
+ * Il metodo add() serve ad aggiungere routes
+ * Il metodo run() serve ad operare, e leggere la URI invocata, eventualmente trovare la $route corrispondente
+ * e successivamente invocare la sua funzione.
+ * Se viene trovata una Route non vengono invocate alrte route
+ * Interessante è la $pathNotFound , speciale route in grado di essere contradistinta ed eseguita sempre nel caso
+ * in cui nessuna route all0interno di $route venga trovata.
+ */
 class PathRoute{
   private static $routes = Array();
   private static $pathNotFound = null;

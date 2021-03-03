@@ -1,4 +1,5 @@
 <?php
+//SOLO DEGLI ESEMPI
   // Include router class
   include('PathRoute.php');
   define('BASEPATH','/');
