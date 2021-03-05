@@ -1,7 +1,6 @@
 BOB
-- creare algoritmo di routing
-- indagare primi due punti di ricerca e sviluppo, appunti legati ai sottodomini e al algoritmo di routing
-
+- Creare una Classe di Routing basata sul algoritmo di routing dei domini e della path
+- Trovare maggiori informazioni sulle specifiche e sulla configurazione di un server dedicato di Aruba
 YORIS
 - fare bozza e creazione di componenti grafici e di qualche view con boostrap
 - scelta di uno o più delle parti di ricerca e sviluppo da approfondire 
@@ -11,5 +10,4 @@ RIKY
 - bozza di una eventuale base di dati cominciando dal ER
 
 ENNIO
-- rifare logo principale
-- tirare giù qualche idea  per il nuovo logo e qualche style e layout grafico per il sito
+- tirare giù qualche idea di style e layout grafico per il sito
