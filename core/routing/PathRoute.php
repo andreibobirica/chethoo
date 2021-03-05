@@ -1,22 +1,35 @@
 <?php
 /**
- * Classe PathRoute, questa classe si occupa di stoccare delle route di path.
- * Una RoutePath è una funzione da eseguire nel caso la path del URL venga corrisposta.
- * All'interno del array $routes vengono appunto memorizzate tante RoutePath
- * Una RoutePath ha una espressione che contradistingue la URI, una funzione da eseguire, e un metodo con cui
- * la richiesta alla URI è stata invocata.
- * Il metodo add() serve ad aggiungere routes
- * Il metodo run() serve ad operare, e leggere la URI invocata, eventualmente trovare la $route corrispondente
- * e successivamente invocare la sua funzione.
- * Se viene trovata una Route non vengono invocate alrte route
- * Interessante è la $pathNotFound , speciale route in grado di essere contradistinta ed eseguita sempre nel caso
- * in cui nessuna route all0interno di $route venga trovata.
+ * La classe PathRoute si occupa del reindirizzamento in base alla path.
+ * La path è la parte successiva al dominio indicata per es /annunci/34234 oppure /vendite/marzo.
+ * La classe PathRoute ha 3 variabile statiche di classe:
+ * $routes si occupa di stoccare delle RoutePath, successivamente definite.
+ * $pathNotFound si occupa di stoccare la RoutePath eseguita nel caso in cui non vengano corrisposte
+ * nussun elemento di $routes dalla URI.
+ * $methodNotAllowed è una variabile contenente una funzione da eseguire nel caso in cui venga invocato un
+ * metodo http non permesso dalla routepath trovata.
+ * 
+ * La clesse ha al suo interno il concetto di $routes, array di routePath.
+ * Una routepath è un oggetto contenente tra i suoi attributi una espressione, una funzione e un metodo.
+ * In particolare l'espressione , che dovrenne essere chiave primaria tra le routePath, è identificativo 
+ * della path nella URI.
+ * La funzione è l'operazione che viene eseguita successivamente nel caso la path della URI conincida con 
+ * la expression della routepath, e il method è un parametro di controllo, capace di differenziare 
+ * routePath richiamate con metodo get e post.
+ * 
+ * Il metodo add aggiunge routePath alla $routes, il metodo run confronta la URI con l'array $routes
+ * e nel caso ne trovi un elemento coincidente alla espressione, ne esegue la funzione, solo del primo routePath trovato.
+ * Nel caso non venga trovato nessun elemento in $routes, viene eseguita la routePath speciale $pathNotFound
  */
 class PathRoute{
   private static $routes = Array();
   private static $pathNotFound = null;
   private static $methodNotAllowed = null;
 
+  /**
+   * Metodo statico di classe pubblico 
+   * capace di aggiungere un oggetto routePath al array $routes.
+   */
   public static function add($expression, $function, $method = 'get'){
     array_push(self::$routes,Array(
       'expression' => $expression,
@@ -25,14 +38,28 @@ class PathRoute{
     ));
   }
 
+  /**
+   * Metodo SET statico di classe
+   * Definisce e sovraccarica la routePath 404 pathNotFound
+   */
   public static function pathNotFound($function){
     self::$pathNotFound = $function;
   }
 
+  /**
+   * Metodo SET statico di classe
+   * Ridefinisce la funzione methodNotAllowed
+   */
   public static function methodNotAllowed($function){
     self::$methodNotAllowed = $function;
   }
 
+  /**
+   * Metodo che confronta l'array di $routes con la URI, e una volta trovato il primo routePath la quale 
+   * espressione coincide con la URI, ne esegue la funzione.
+   * Fa ulteriori verifiche in base al metodo http.
+   * In alternativa se non trova nessuna routepath esegue la pathNotFound.
+   */
   public static function run($basepath = '/'){
 
     // Parse current url

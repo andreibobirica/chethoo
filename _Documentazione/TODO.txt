@@ -1,9 +1,10 @@
 BOB
-- Creare una Classe di Routing basata sul algoritmo di routing dei domini e della path
 - Trovare maggiori informazioni sulle specifiche e sulla configurazione di un server dedicato di Aruba
+- nel routing.php trovare un modo per passare i parametri a PathRoute::add() da eseguire nella funzione.
+- nel routing, vedere la correlazione tra le funzioni eseguite e i response 404 e 500 di errore HTTP
 YORIS
 - fare bozza e creazione di componenti grafici e di qualche view con boostrap
-- scelta di uno o più delle parti di ricerca e sviluppo da approfondire 
+- fare ricerca e sviluppo della parte della gestione del database delle auto e dei veicoli.
 
 RIKY
 - familiarizzazione con la realtà presa in esame, ed esposizione di eventuali dubbi

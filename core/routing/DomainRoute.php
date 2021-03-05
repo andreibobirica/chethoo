@@ -1,4 +1,11 @@
 <?php
+
+/**
+ * La classe DomainRoute fornisce dei metodi di classe statici capaci di fornire informazioni relative
+ * al dominio e al sottodominio.
+ * 
+ */
+
 class DomainRoute{
 
     /**
@@ -18,8 +25,7 @@ class DomainRoute{
         return "marco";
         //prova
         $reserved = array("api", "www", "admin", "mail");
-        return !in_array($subdomain,$reserved);
-       
+        return !in_array($subdomain,$reserved); 
     }
 
 
@@ -46,6 +52,7 @@ class DomainRoute{
         //print_r($arrayUriDomain);
         //print("</br>");
         //print_r(DomainRoute::arrayExceptIndex($arrayUriDomain,0));
+
         //caso chethoo.it
         if($arrayDomain===$arrayUriDomain){
             return true;
@@ -54,7 +61,7 @@ class DomainRoute{
         elseif(DomainRoute::arrayExceptIndex($arrayUriDomain,0)===$arrayDomain){
             return $arrayUriDomain[0];
         }
-        //caso errore o etc
+        //caso errore o etc, ciao.api.chethoo.it
         else{
             return false;
         }

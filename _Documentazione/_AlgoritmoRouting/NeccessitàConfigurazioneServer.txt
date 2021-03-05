@@ -1,0 +1,72 @@
+Scoperto che con il servizio di Hosting Aruba , con Hosting linux Basic si ha un cluster di server condiviso, i sottodomini sono acquistabili e 
+per la funzionalità da fare non è realizzabile acquistando questo servizio.
+
+Serve un server dedicato, prese sempre da aruba, sia per gestire questa criticità, che per gestire 
+la mole di lavoro e di carico potenzialmente più grande.
+Il dubbio rimane se con un server dedicato si sarà in grado di mandare MAIL.
+Il dubbio ulteriore è quale server comprare, se CentOS oppure Ubuntu.
+
+
+----MODIFICHE DA FARE nel file .htaccess da mettere nella / del server
+
+DirectoryIndex index.php
+
+# enable apache rewrite engine
+RewriteEngine on
+
+# set your rewrite base
+# Edit this in your init method too if you script lives in a subfolder
+RewriteBase /
+
+# Deliver the folder or file directly if it exists on the server
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+ 
+# Push every request to index.php
+RewriteRule ^(.*)$ index.php [QSA]
+
+
+----MODIFICHE DA FARE nel file httpd.conf, file di configurazione di Apache trovato nella sua cartella di conf
+
+Alias /bitnami/ "/Applications/XAMPP/xamppfiles/apache2/htdocs/"
+Alias /bitnami "/Applications/XAMPP/xamppfiles/apache2/htdocs"
+
+<VirtualHost localhost:80>
+    DocumentRoot "/Applications/XAMPP/xamppfiles/htdocs"
+    ServerName localhost
+    ServerAlias localhost
+    <Directory "/Applications/XAMPP/xamppfiles/apache2/htdocs">
+        Options -Indexes 
+        Options FollowSymLinks
+        AllowOverride All
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:80>
+    DocumentRoot "/Applications/XAMPP/xamppfiles/htdocs"
+    ServerName localhost
+    ServerAlias *.localhost
+    <Directory "/Applications/XAMPP/xamppfiles/apache2/htdocs">
+        Options -Indexes 
+        Options FollowSymLinks
+        AllowOverride All
+    </Directory>
+</VirtualHost>
+
+----VERE MODIFICHE DA FARE SUFICIENTI
+----MODIFICHE DA FARE nel file httpd.conf, file di configurazione di Apache trovato nella sua cartella di conf
+
+Alias /bitnami/ "/Applications/XAMPP/xamppfiles/apache2/htdocs/"
+Alias /bitnami "/Applications/XAMPP/xamppfiles/apache2/htdocs"
+
+<VirtualHost localhost:80>
+    DocumentRoot "/Applications/XAMPP/xamppfiles/htdocs"
+    ServerName localhost
+    ServerAlias *.localhost
+    <Directory "/Applications/XAMPP/xamppfiles/apache2/htdocs">
+        Options -Indexes 
+        Options FollowSymLinks
+        AllowOverride All
+    </Directory>
+</VirtualHost>
+
