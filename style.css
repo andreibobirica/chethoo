@@ -1,0 +1,9 @@
+input.form-control {
+  -webkit-box-shadow: none !important;
+          box-shadow: none !important;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-radius: 0px;
+  padding: 0px;
+}

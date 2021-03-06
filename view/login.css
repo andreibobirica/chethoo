@@ -1,0 +1,24 @@
+input.form-control {
+  width: 80%;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.card .card-body .card-title {
+  margin-bottom: 30px;
+}
+
+.card .card-body #login-button {
+  margin-top: 40px;
+  padding: 4px;
+  font-size: 17px;
+  margin-bottom: 20px;
+}
+
+.card .card-body #login-button .fas.fa-sign-in-alt {
+  margin-left: 10px;
+}
+
+.card .card-body #password-forgot {
+  margin-top: 30px;
+}
