@@ -26,7 +26,7 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA]
 
 
-----MODIFICHE DA FARE nel file httpd.conf, file di configurazione di Apache trovato nella sua cartella di conf
+----MAC MODIFICHE DA FARE nel file httpd.conf, file di configurazione di Apache trovato nella sua cartella di conf
 
 Alias /bitnami/ "/Applications/XAMPP/xamppfiles/apache2/htdocs/"
 Alias /bitnami "/Applications/XAMPP/xamppfiles/apache2/htdocs"
@@ -68,5 +68,14 @@ Alias /bitnami "/Applications/XAMPP/xamppfiles/apache2/htdocs"
         Options FollowSymLinks
         AllowOverride All
     </Directory>
+</VirtualHost>
+
+
+--- WINDOWS AND LINUX, Aggiungere questo a httpd.conf
+
+<VirtualHost localhost:80>
+    DocumentRoot "C:/xampp/htdocs"
+    ServerName localhost
+    ServerAlias *.localhost
 </VirtualHost>
 
