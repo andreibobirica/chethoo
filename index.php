@@ -11,5 +11,7 @@ if(session_status() == PHP_SESSION_NONE){
 }
 
 //Algoritmo di Routing Domain e Path
-include_once('./core/routing/routing.php');
+include_once('./core/routing/Routing.php');
+$routing = new Routing();
+$routing->run();
 ?>

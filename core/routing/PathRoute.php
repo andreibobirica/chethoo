@@ -2,16 +2,16 @@
 /**
  * La classe PathRoute si occupa del reindirizzamento in base alla path.
  * La path è la parte successiva al dominio indicata per es /annunci/34234 oppure /vendite/marzo.
- * La classe PathRoute ha 3 variabile statiche di classe:
- * $routes si occupa di stoccare delle RoutePath, successivamente definite.
- * $pathNotFound si occupa di stoccare la RoutePath eseguita nel caso in cui non vengano corrisposte
+ * La classe PathRoute ha 3 attributi privati:
+ * $routes si occupa di stoccare delle RoutePath.
+ * $pathNotFound si occupa di stoccare la routePath eseguita nel caso in cui non vengano corrisposte
  * nussun elemento di $routes dalla URI.
  * $methodNotAllowed è una variabile contenente una funzione da eseguire nel caso in cui venga invocato un
  * metodo http non permesso dalla routepath trovata.
  * 
  * La clesse ha al suo interno il concetto di $routes, array di routePath.
  * Una routepath è un oggetto contenente tra i suoi attributi una espressione, una funzione e un metodo.
- * In particolare l'espressione , che dovrenne essere chiave primaria tra le routePath, è identificativo 
+ * In particolare l'espressione , che dovrebbe essere chiave primaria tra le routePath, è identificativo 
  * della path nella URI.
  * La funzione è l'operazione che viene eseguita successivamente nel caso la path della URI conincida con 
  * la expression della routepath, e il method è un parametro di controllo, capace di differenziare 
@@ -22,16 +22,16 @@
  * Nel caso non venga trovato nessun elemento in $routes, viene eseguita la routePath speciale $pathNotFound
  */
 class PathRoute{
-  private static $routes = Array();
-  private static $pathNotFound = null;
-  private static $methodNotAllowed = null;
+  private $routes = Array();
+  private $pathNotFound = null;
+  private $methodNotAllowed = null;
 
   /**
-   * Metodo statico di classe pubblico 
+   * Metodo add a lista pubblico 
    * capace di aggiungere un oggetto routePath al array $routes.
    */
-  public static function add($expression, $function, $method = 'get'){
-    array_push(self::$routes,Array(
+  public function add($expression, $function, $method = 'get'){
+    array_push($this->routes,Array(
       'expression' => $expression,
       'function' => $function,
       'method' => $method
@@ -39,19 +39,19 @@ class PathRoute{
   }
 
   /**
-   * Metodo SET statico di classe
+   * Metodo SET pubblico
    * Definisce e sovraccarica la routePath 404 pathNotFound
    */
-  public static function pathNotFound($function){
-    self::$pathNotFound = $function;
+  public function pathNotFound($function){
+    $this->pathNotFound = $function;
   }
 
   /**
-   * Metodo SET statico di classe
+   * Metodo SET pubblico
    * Ridefinisce la funzione methodNotAllowed
    */
-  public static function methodNotAllowed($function){
-    self::$methodNotAllowed = $function;
+  public function methodNotAllowed($function){
+    $this->methodNotAllowed = $function;
   }
 
   /**
@@ -60,7 +60,7 @@ class PathRoute{
    * Fa ulteriori verifiche in base al metodo http.
    * In alternativa se non trova nessuna routepath esegue la pathNotFound.
    */
-  public static function run($basepath = '/'){
+  public function run($basepath = '/'){
 
     // Parse current url
     $parsed_url = parse_url($_SERVER['REQUEST_URI']);//Parse Uri
@@ -76,7 +76,7 @@ class PathRoute{
     $path_match_found = false;
     $route_match_found = false;
 
-    foreach(self::$routes as $route){
+    foreach($this->routes as $route){
       // If the method matches check the path
       // Add basepath to matching string
       if($basepath!=''&&$basepath!='/'){
@@ -112,13 +112,13 @@ class PathRoute{
       // But a matching path exists
       if($path_match_found){
         header("HTTP/1.0 405 Method Not Allowed");
-        if(self::$methodNotAllowed){
-          call_user_func_array(self::$methodNotAllowed, Array($path,$method));
+        if($this->methodNotAllowed){
+          call_user_func_array($this->methodNotAllowed, Array($path,$method));
         }
       }else{
         header("HTTP/1.0 404 Not Found");
-        if(self::$pathNotFound){
-          call_user_func_array(self::$pathNotFound, Array($path));
+        if($this->pathNotFound){
+          call_user_func_array($this->pathNotFound, Array($path));
         }
       }
     }
