@@ -38,116 +38,140 @@
  *      - /         ->>     Pagina del venditore
  *      - /login    ->>     pagina Login Normale
  * 
- * Per Vista si intende una view, una pagina HTML vuota e non popolata, nemmeno con testo dentro, dove è presente solo uno skeleton.
- * Abbinata alla Vista ci sarà un controller fatto in Javascript che , facendo le opportune richieste, popolerà
- * la Vista, sia con i dati statici, che con i dati dinamini.
- * Si intende per dati statici scritte e descrizioni del sito, si intende per dati dinamici parti di testo prese
- * dal database ed immagini allegate.
- * Durante l'interazione con la pagina, il controller potrà chiedere nuovi dati e popolare nuove parti della view.
- * In caso ci fosse bisogno di inviare dei dati, tramite FORM, oppure panelli di modifica dati:
- * Il processo di visualizzazione, modifica, caricamento, e ri-visualizzazione, sarà fatto dalla stessa VIEW.
- * In pratica ogni view sarà come una piccola web app.
  */
 
  //Include neccessari
-include_once('./core/routing/DomainRoute.php');
-include_once('./core/routing/PathRoute.php');
+ include_once('./core/routing/DomainRoute.php');
+ include_once('./core/routing/PathRoute.php');
 
-$subdomain = DomainRoute::getSubdomain($_SERVER['SERVER_NAME'],DOMAIN);
-//Caso dominio BASE es chethoo.it
-if($subdomain===true){
-    casoBase();
-}
-//Caso subdomain errore es c.ciao.ciao.chethoo.it
-elseif($subdomain===false){
-    casoSubdomainErrore();
-}
-//Caso in cui è presente un subdomain valido sintaticamente
-else{
-    //in base al valore di $subdomain
-    //se riservato = FALSE
-    //se non in DB = TRUE
-    //se    in DB  = valore
+class Routing{
+    //stringa o booleano che rappresenta nome o stato del sottodomino e dominio
+    private $subdomain = null;
 
-    $esitoVerificaSubdomain = DomainRoute::verifySubdomain($subdomain);
-    //caso subdominio riservato
-    if($esitoVerificaSubdomain===false){
-        casoSubdomainRiservato($subdomain);
+    //classe DomainRoute per la gestione del routing di dominio
+    private $domainRoute = null;
+    //classe PathRoute per la gestione del routing di path
+    private $pathRoute = null;
+
+    function __construct() {
+        $this->domainRoute = new DomainRoute();
+        $this->pathRoute = new PathRoute();
+        $this->subdomain = $this->domainRoute->getSubdomain();
     }
-    //caso subdomain non riservato e non presente in DB
-    elseif($esitoVerificaSubdomain === true){
-        casoSubdomainNonInDB($subdomain);
+
+    /**Metodo run che fa partire il processo di routing */
+    public function run(){
+        //caso eseguito sempre
+        $this->casoEseguitoSempre();
+
+        //Caso dominio BASE es chethoo.it
+        if($this->subdomain===true){
+            $this->casoBase();
+        }
+        //Caso subdomain errore es c.ciao.ciao.chethoo.it
+        elseif($this->subdomain===false){
+            $this->casoSubdomainErrore();
+        }
+        //Caso in cui è presente un subdomain valido sintaticamente
+        else{
+            //in base al valore di $subdomain
+            //se riservato = FALSE
+            //se non in DB = TRUE
+            //se    in DB  = valore
+
+            $esitoVerificaSubdomain = $this->domainRoute->verifySubdomain($this->subdomain);
+            //caso subdominio riservato
+            if($esitoVerificaSubdomain === true){
+                $this->casoSubdomainRiservato($this->subdomain);
+            }
+            //caso subdomain non riservato e non presente in DB
+            elseif($esitoVerificaSubdomain === false){
+                $this->casoSubdomainNonInDB($this->subdomain);
+            }
+            //caso subdomnio non riservato e presente in db
+            else{
+                $this->casoSubdomainInDB($this->subdomain);
+            }
+        }
+
+        // Run the Router with the given Basepath
+        //Viene eseguita la ricerca dela routePath corrispondente, e viene effettivamente eseguita la reindirizzazione
+        $this->pathRoute->run(BASEPATH);
     }
-    //caso subdomnio non riservato e presente in db
-    else{
-        casoSubdomainInDB($subdomain);
+
+    /**
+     * Funzione eseguita sempre in ogni caso ed in ogni sottodominio
+     */
+    private function casoEseguitoSempre(){
+        //DA DEFINIRE LA 404
+
+        //PAGINE SEMPRE RAGGIUNGIBILI
+        $this->pathRoute->add('/logout',function(){
+            echo "Sei sicuro di voler uscire? :-)";
+        });
+    }
+
+    /**
+     * Funzione eseguita nel caso base in cui il dominio è chethoo.it senza sottodomini, e senza sottodomini errati
+     */
+    private function casoBase(){
+        // Add base route (startpage)
+        $this->pathRoute->add('/',function(){
+        echo 'Welcome to caso base, sei sulla pagina di ricerca :-)';
+        });
+
+        $this->pathRoute->add('/chi-siamo/',function(){
+            echo 'Ciao siamo gli admin di chethoo, ecco noi siamo così bravi</br>';
+            echo 'Ciao comunque';
+        });
+
+        $this->pathRoute->add('/ciao/',function(){
+            echo 'Ciao comunque';
+        });
+    }
+
+    /**
+     * Funzione eseguita in caso di errore presenti nel sottodominio, come per esempio ciao.mamma.chethoo.it
+     */
+    private function casoSubdomainErrore(){
+        print("false, errore subdominio errore 404");
+    }
+
+    /**
+     * Funzione eseguita nel caso in cui il sottodomino valido sintatticamente , formalmente rapresenta una stringa
+     * riservata come per esempio www oppure mail oppure ftp.
+     * Il parametro $subdomain serve appunto a tenere traccia nel valore del subdomain, e reindirizzarlo perso il giusto 
+     * servizio.
+     */
+    private function casoSubdomainRiservato($subdomain){
+        //REINDIRIZZAMENTO SU SERVIZIO RISERVATO
+        print("subdomain riservato");
+    }
+
+    /**
+     * Funzione eseguita nel caso in cui il subdomain sia valido sintatticamente, non siano presenti errori nel
+     * sottodominio o nel dominio , ma tuttavia il sottodominio, o meglio la stringa che la cui lo rappresenta
+     * non viene trovata nel DB, e quindi non è valida.
+     * Il reindirizzamento può avvenire in base al parametro $subdomain
+     * 
+     */
+    private function casoSubdomainNonInDB($subdomain){
+        //REINDIRIZZAMENTO SU pagina 404
+        print("subdomain non valido da DB, errore 404");
+    }
+
+    /**
+     * Funzione eseguita nel caso in cui il subdomain sia valido sintatticamente, non siano presenti errori nel
+     * sottodominio o nel dominio e il sottodomionio quindi la stringa che la cui lo rappresenta viene trovata nel DB, 
+     * e quindi è valida.
+     * Il reindirizzamento può avvenire in base al parametro $subdomain
+     */
+    private function casoSubdomainInDB($subdomain){
+        //REINDIRIZZAMENTO SU pagina specifica.
+        print("subdomain valido da DB");
+        $this->pathRoute->add('/profile/',function(){
+            echo 'Ciao Ecco il tuo profilo';
+        });
     }
 }
-
-/**
- * Funzione eseguita nel caso base in cui il dominio è chethoo.it senza sottodomini, e senza sottodomini errati
- */
-function casoBase(){
-    print("true sito normale <br/>");
-    // Add base route (startpage)
-    PathRoute::add('/',function(){
-      echo 'Welcome to caso base, sei sul dominio di default :-)';
-    });
-
-    PathRoute::add('/ciao/',function(){
-        echo 'Welcome to caso base, sei sul dominio di default :-)</br>';
-        echo 'Ciao comunque';
-
-    });
-}
-
-/**
- * Funzione eseguita in caso di errore presenti nel sottodominio, come per esempio ciao.mamma.chethoo.it
- */
-function casoSubdomainErrore(){
-    print("false, errore subdominio errore 404");
-}
-
-/**
- * Funzione eseguita nel caso in cui il sottodomino valido sintatticamente , formalmente rapresenta una stringa
- * riservata come per esempio www oppure mail oppure ftp.
- * Il parametro $subdomain serve appunto a tenere traccia nel valore del subdomain, e reindirizzarlo perso il giusto 
- * servizio.
- */
-function casoSubdomainRiservato($subdomain){
-    //REINDIRIZZAMENTO SU SERVIZIO RISERVATO
-    print("subdomain riservato");
-}
-
-/**
- * Funzione eseguita nel caso in cui il subdomain sia valido sintatticamente, non siano presenti errori nel
- * sottodominio o nel dominio , ma tuttavia il sottodominio, o meglio la stringa che la cui lo rappresenta
- * non viene trovata nel DB, e quindi non è valida.
- * Il reindirizzamento può avvenire in base al parametro $subdomain
- * 
- */
-function casoSubdomainNonInDB($subdomain){
-    //REINDIRIZZAMENTO SU pagina 404
-    print("subdomain non valido da DB, errore 404");
-}
-
-/**
- * Funzione eseguita nel caso in cui il subdomain sia valido sintatticamente, non siano presenti errori nel
- * sottodominio o nel dominio e il sottodomionio quindi la stringa che la cui lo rappresenta viene trovata nel DB, 
- * e quindi è valida.
- * Il reindirizzamento può avvenire in base al parametro $subdomain
- */
-function casoSubdomainInDB($subdomain){
-    //REINDIRIZZAMENTO SU pagina specifica.
-    print("subdomain valido da DB");
-    PathRoute::add('/',function(){
-        echo "Welcome to marco  :-)";
-    });
-}
-
-
-
-// Run the Router with the given Basepath
-//Viene eseguita la ricerca dela routePath corrispondente, e viene effettivamente eseguita la reindirizzazione
-PathRoute::run(BASEPATH);
 ?>
