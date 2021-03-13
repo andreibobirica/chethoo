@@ -74,23 +74,19 @@ class Routing{
         }
         //Caso in cui è presente un subdomain valido sintaticamente
         else{
-            //in base al valore di $subdomain
-            //se riservato = FALSE
-            //se non in DB = TRUE
-            //se    in DB  = valore
-
-            $esitoVerificaSubdomain = $this->domainRoute->verifySubdomain($this->subdomain);
             //caso subdominio riservato
-            if($esitoVerificaSubdomain === true){
+            if($this->domainRoute->verifySubdomainReserved($this->subdomain)){
                 $this->casoSubdomainRiservato($this->subdomain);
             }
-            //caso subdomain non riservato e non presente in DB
-            elseif($esitoVerificaSubdomain === false){
-                $this->casoSubdomainNonInDB($this->subdomain);
-            }
-            //caso subdomnio non riservato e presente in db
             else{
-                $this->casoSubdomainInDB($this->subdomain);
+                //caso subdomain non presente in DB
+                if($this->domainRoute->verifySubdomainInDB($this->subdomain)){
+                    $this->casoSubdomainInDB($this->subdomain);
+                }
+                //caso subdomnio     presente in db
+                else{
+                    $this->casoSubdomainNonInDB($this->subdomain);
+                }
             }
         }
 
@@ -170,7 +166,7 @@ class Routing{
         //REINDIRIZZAMENTO SU pagina specifica.
         print("subdomain valido da DB");
         $this->pathRoute->add('/profile/',function(){
-            echo 'Ciao Ecco il tuo profilo';
+            echo '<br/>Ciao Ecco il tuo profilo';
         });
     }
 }

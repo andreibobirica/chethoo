@@ -37,26 +37,25 @@ class DomainRoute{
      * Data una stringa detta subdomain
      * Si controlla se la stringa fa parte di termini riservati.
      * Se fa parte di termini riservati viene ritornato TRUE
-     * Se non fa parte di termini riservati viene successivamente
-     * effettuato un controllo, per vedere se il subdomain è contenuto all'interno del 
-     * DATABASE.
-     * Se non è contenuto nel database viene ritornato FALSE
-     * Se     è contenuto nel database viene ritornato il suo valore medesimo.
+     * Se non fa parte di termini riservati viene ritornato FALSE
      */
-    public function verifySubdomain($subdomain){
-         //VERIFICA NEL DATABASE
-        //Verifica se il sottodominio è veritiero
-        if($subdomain=="marco")
-        return "marco";
-
-
-        //prova
-
-
-
-        $reserved = array("api", "www", "admin", "mail");
-        return in_array($subdomain,$reserved); 
+    public function verifySubdomainReserved($subdomain){
+       $reserved = array("api", "www", "admin", "mail");
+       return in_array($subdomain,$reserved); 
     }
+
+    /**
+     * Data una stringa detta subdomain
+     * Si controlla se la stringa è contenuta nel DB come sottodominio autorizzato
+     * Se     è contenuto ritorna TRUE
+     * Se non è contenuto ritorna FALSE
+     */
+    public function verifySubdomainInDB($subdomain){
+        //VERIFICA NEL DATABASE
+       //Verifica se il sottodominio è veritiero
+       if($subdomain=="marco")
+       return true;
+   }
 
 
     /**
