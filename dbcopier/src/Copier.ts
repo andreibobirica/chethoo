@@ -1,25 +1,36 @@
-import { Ajax } from "./Ajax.js";
+import {Ajax} from "./Ajax.js"
 export class Copier {
-    constructor() {
+    private staticDataJS : object;
+    private ajaxController : Ajax;
+
+    public constructor(){
         this.ajaxController = new Ajax();
     }
-    getStaticDataJSfrom24() {
-        this.ajaxController.sendAjaxRequest("GET", "./dataDispatcher.php?staticDataJS", null, (res) => {
+
+    private getStaticDataJSfrom24(){
+        this.ajaxController.sendAjaxRequest("GET","./dataDispatcher.php?staticDataJS",null,
+        (res: object): void => {
             //salvo i risultati
             this.staticDataJS = res;
             //stampo nel log
             this.printStaticDataJS();
+
             //manipolazione temporanea
             this.manipulation();
         });
     }
-    printStaticDataJS() {
+
+    private printStaticDataJS(){
         console.log(this.staticDataJS);
     }
-    manipulation() {
+
+    private manipulation(){
         console.log(this.staticDataJS.makes);
     }
-    run() {
+
+
+
+    public run(){
         //Prendo i dati statici dal DB 24
         this.getStaticDataJSfrom24();
         //Ulteriori istruzioni eseguite nel suo callback
