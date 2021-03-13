@@ -2,7 +2,9 @@
   "compilerOptions": {
     "outDir": "./built",
     "allowJs": true,
-    "target": "ES6"
+    "target": "ES6",
+    "module": "es6",
+    "allowSyntheticDefaultImports": true
   },
   "include": ["./src/**/*"]
 }

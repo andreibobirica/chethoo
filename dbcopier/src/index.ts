@@ -1,4 +1,15 @@
-import $ from "jquery";
+import {Manager} from "./Manager.js";
+class Prova2{
+    private num : number = 10;
+    public getNum() : number{
+        return this.num;
+    }
+}
+
+let m1 = new Manager("Matteo");
+
+console.log("hellso");
+console.log(m1);
 
 export class Copier {
     private sendAjaxRequest(_type: string, _url: string, _params: string, _callback: any) {
@@ -22,11 +33,9 @@ export class Copier {
     }
 
     public run(){
-        this.sendAjaxRequest("GET","",null,cp.mostraris);
+        //this.sendAjaxRequest("GET","https://www.autoscout24.it/offerb2c/data/Mdw/StaticData/StaticDataJs",null,cp.mostraris);
     }
 }
 
 let cp : Copier = new Copier();
 cp.run();
-
-
