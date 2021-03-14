@@ -15,4 +15,22 @@ export class Ajax{
             _callback({ err: true, message: "Request failed: " + textStatus });
         });
     }
+
+    public sendAjaxRequestBlob(_type: string, _url: string, _params: FormData, _callback: any) {
+        var request = $.ajax({
+            type: _type,
+            url: _url,
+            data: _params,
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+        request.done(function(res : object) {
+            _callback(res);
+        });
+        request.fail(function(jqXHR, textStatus) {
+            console.error(jqXHR)
+            _callback({ err: true, message: "Request failed: " + textStatus });
+        });
+    }
 }

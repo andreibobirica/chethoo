@@ -1,6 +1,6 @@
 import {Ajax} from "./Ajax.js"
 export class Copier {
-    private staticDataJS : object;
+    private staticDataJS : any;
     private ajaxController : Ajax;
 
     public constructor(){

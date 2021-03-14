@@ -15,4 +15,21 @@ export class Ajax {
             _callback({ err: true, message: "Request failed: " + textStatus });
         });
     }
+    sendAjaxRequestBlob(_type, _url, _params, _callback) {
+        var request = $.ajax({
+            type: _type,
+            url: _url,
+            data: _params,
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+        request.done(function (res) {
+            _callback(res);
+        });
+        request.fail(function (jqXHR, textStatus) {
+            console.error(jqXHR);
+            _callback({ err: true, message: "Request failed: " + textStatus });
+        });
+    }
 }

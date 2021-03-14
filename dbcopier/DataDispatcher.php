@@ -16,6 +16,11 @@ class DataDispatcher{
         print_r($data);
     }
 
+    public function saveImage(){
+        file_put_contents("./images/image.jpeg" ,$_POST['image']);
+        return print_r($_POST['image']);
+    }
+
 
 }
 
@@ -23,5 +28,9 @@ $dd= new DataDispatcher();
 
 if(isset($_GET["staticDataJS"])){
     $dd->getStaticDataJs();
+}
+
+if(isset($_GET["saveImage"])){
+    $dd->saveImage();
 }
 ?>
