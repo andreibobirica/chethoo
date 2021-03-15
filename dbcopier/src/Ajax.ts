@@ -1,11 +1,11 @@
 export class Ajax{
-    public sendAjaxRequest(_type: string, _url: string, _params: string, _callback: any) {
+    public sendAjaxRequest(_type: string, _url: string, _data: string, _callback: any) {
         var request = $.ajax({
             type: _type,
             url: _url,
-            data: _params,
+            data: _data,
             dataType: "json",
-            contentType: 'json'
+            contentType: 'application/json'
         });
         request.done(function(res : object) {
             _callback(res);

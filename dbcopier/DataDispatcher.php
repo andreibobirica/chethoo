@@ -17,11 +17,28 @@ class DataDispatcher{
     }
 
 
+    public function getModelsForMake(){
+        $data = $this->makeHTTPRequest("https://www.autoscout24.it/offerb2c/data/NewDecision/Taxonomy/GetVehicleModelLineDataIT?countryISOCode=IT&make=$_GET[make]&year=$_GET[year]$_GET[month]");
+        print_r($data);
+    }
+
+    public function getDetailForModel(){
+        $data = $this->makeHTTPRequest("https://www.autoscout24.it/offerb2c/data/NewDecision/Taxonomy/GetVehicleIdentificationDataIT?NumberOfDoors=$_GET[nDoors]&bodyTypeId=$_GET[bodytype]&countryISOCode=IT&make=$_GET[make]&modelID=$_GET[model]&year=$_GET[year]$_GET[month]");
+        print_r($data);
+    }
+
+
 }
 
 $dd= new DataDispatcher();
 
-if(isset($_GET["staticDataJS"])){
+if(isset($_GET["ModelsForMake"])){
+    $dd->getModelsForMake();
+}elseif(isset($_GET["staticDataJS"])){
     $dd->getStaticDataJs();
+}elseif(isset($_GET["detailForModel"])){
+    $dd->getDetailForModel();
+}elseif(isset($_GET["postMakes"])){
+    print_r(json_encode($_POST));
 }
 ?>
