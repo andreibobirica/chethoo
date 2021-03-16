@@ -52,16 +52,16 @@ export class Copier {
             this.bodyTypes = this.staticDataJS.bodyTypes;
             //Invio dei dati statici al DB
             this.postMakes();
-            //this.postGearingTypes();
-            //this.postFuel();
-            //this.postBodyTypes();
+            this.postGearingTypes();
+            this.postFuel();
+            this.postBodyTypes();
             //Extract Model From makes for each make
             console.log("NUMERO MAKES:" + this.makes.length);
             $("#dateRecuperoDati").html("<span>[" + yearstart + "-" + (yearstop) + "[</span>");
             //ciclo ciascun anno da cui carpire i dati, faccio partire una iterazione ricorsiva assincrana per ciascun anno
             for (let anno = yearstart; anno > yearstop; anno--) {
                 this.recursionInstanceModel++; //Incremento delle istanze di ricorsione
-                this.extractModels(0, anno, 1, anno, anno - 1); //Ciascuna iterazione ricorsiva controlla 1 anno
+                this.extractModels(120, anno, 12, anno, anno - 1); //Ciascuna iterazione ricorsiva controlla 1 anno
             }
         });
     }
@@ -108,21 +108,24 @@ export class Copier {
             if (year > yearstop) {
                 this.ajaxController.sendAjaxRequest("GET", `./dataDispatcher.php?ModelsForMake&make=${makeID}&year=${year}&month=${zero}${month}`, null, (res) => {
                     //foreach result insert Model
-                    if (res !== undefined)
+                    if (res.forEach !== undefined) {
                         res.forEach(element => {
                             this.insertModel(element, makeID, year, month);
                         });
+                    }
+                    else
+                        console.log(`./dataDispatcher.php?ModelsForMake&make=${makeID}&year=${year}&month=${zero}${month}`);
                     if (month < 12)
                         this.extractModels(makesKey, year, month + 1, yearstart, yearstop);
                     else
-                        this.extractModels(makesKey, year - 1, 1, yearstart, yearstop);
+                        this.extractModels(makesKey, year - 1, 12, yearstart, yearstop);
                 });
             }
             else {
                 let percentuale = Math.round((makesKey * 100 / this.makes.length) * 100) / 100;
                 //console.log("Stato Download Modelli sotto "+yearstart+": "+percentuale+"%");
                 $("#percModel").html(percentuale + "");
-                this.extractModels(makesKey + 1, yearstart, 1, yearstart, yearstop);
+                this.extractModels(makesKey + 1, yearstart, 12, yearstart, yearstop);
             }
         }
         else {
@@ -135,12 +138,21 @@ export class Copier {
                 $("#percModel").html(100 + "");
                 //Recupero delle informazioni in maniera assincrona con 25 iterazioni ricorsive
                 console.log("NUMERO MODELLI:" + this.modelsTotal.length);
-                for (let i = 0; i < 25; i++) {
-                    this.recursionInstanceDetail++;
-                    let modelKeyStart = Math.round((this.modelsTotal.length / 25) * i);
-                    let modelKeyStop = Math.round((this.modelsTotal.length / 25) * (i + 1));
-                    //console.log("modelkey "+modelKeyStart+" - modelKeyEnd:"+modelKeyStop);
-                    this.getDetailForModel(modelKeyStart, modelKeyStop);
+                //Se il numero di modelli è <= a 0 non faccio richieste di dettagli
+                if (this.modelsTotal.length <= 0)
+                    console.log("Nessun modello da analizzare");
+                //Se ci sono modelli
+                else {
+                    for (let minizio = 0, stop = false; minizio < 6 && !stop; minizio++) {
+                        //Controllo degli indici del modello
+                        if (minizio >= this.modelsTotal.length) {
+                            stop = true;
+                        }
+                        else {
+                            this.recursionInstanceDetail++;
+                            this.getDetailForModel(minizio, this.modelsTotal.length);
+                        }
+                    }
                 }
             }
         }
@@ -175,8 +187,8 @@ export class Copier {
             //Set Details of Model
             m.setDetails(dets);
             //caso ric
-            if (modelKey + 1 < modelEndKey) {
-                this.getDetailForModel(modelKey + 1, modelEndKey);
+            if (modelKey + 6 < modelEndKey) {
+                this.getDetailForModel(modelKey + 6, modelEndKey);
                 //Caso base
             }
             else {
@@ -187,7 +199,7 @@ export class Copier {
                 //Questa è l'ultima istanza ricorsiva, si eleborano i dati
                 else {
                     $("#percDetail").html(100 + "");
-                    //MANDA IN DATABASE
+                    this.postModelsDetailsProductions(0);
                     console.log(this.modelsTotal);
                 }
             }
@@ -209,35 +221,35 @@ export class Copier {
         if (a.length != 25)
             a = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
         let detInt = {
-            _buildPeriod: det.BuildPeriod !== undefined ? det.BuildPeriod : "",
-            _codall: det.CODALL !== undefined ? det.CODALL : "",
-            _FuelTypeID: det.FuelTypeID !== undefined ? det.FuelTypeID : "",
-            _hsn: det.HSN !== undefined ? det.HSN : "",
-            _modelLine: det.ModelLine !== undefined ? det.ModelLine : "",
-            _powerKW: det.PowerKW !== undefined ? det.PowerKW : "",
-            _powerPS: det.PowerPS !== undefined ? det.PowerPS : "",
-            _schckeId: det.SchwackeId !== undefined ? det.SchwackeId : "",
-            _tsn: det.TSN !== undefined ? det.TSN : "",
-            _version: det.Version !== undefined ? det.Version : "",
-            _gearingTypeId: a[8].replace("gearingtype=", ""),
-            _noOfSeats: det.NoOfSeats !== undefined ? det.NoOfSeats : "",
-            _gears: a[9].replace("gears=", ""),
-            _ccm: a[10].replace("ccm=", ""),
-            _cylinders: a[11].replace("cylinders=", ""),
-            _weight: a[12].replace("weight=", ""),
-            _consumptionmixed: a[13].replace("consumptionmixed=", ""),
-            _consumptioncity: a[14].replace("consumptioncity=", ""),
-            _type: a[7].replace("type=", ""),
-            _consumptionhighway: a[15].replace("consumptionhighway=", ""),
-            _co2emissionmixed: a[16].replace("co2emissionmixed=", ""),
-            _adtype: a[17].replace("adtype=", ""),
-            _emclass: a[18].replace("emclass=", ""),
-            _transm: a[19].replace("transm=", ""),
-            _equi: a[21].replace("equi=", ""),
-            _upholsteryid: a[22].replace("upholsteryid=", ""),
-            _firstreg_mth: a[23].replace("firstreg_mth=", ""),
-            _firstreg_year: a[24].replace("firstreg_year=", ""),
-            _queryString: det.QueryString !== undefined ? det.QueryString : ""
+            _buildPeriod: det.BuildPeriod !== undefined ? det.BuildPeriod : "0",
+            _codall: det.CODALL !== undefined ? det.CODALL : 0,
+            _FuelTypeID: det.FuelTypeID !== undefined ? det.FuelTypeID : 0,
+            _hsn: det.HSN !== undefined ? det.HSN : 0,
+            _modelLine: det.ModelLine !== undefined ? det.ModelLine : "0",
+            _powerKW: det.PowerKW !== undefined ? det.PowerKW : 0,
+            _powerPS: det.PowerPS !== undefined ? det.PowerPS : 0,
+            _schckeId: det.SchwackeId !== undefined ? det.SchwackeId : 0,
+            _tsn: det.TSN !== undefined ? det.TSN : 0,
+            _version: det.Version !== undefined ? det.Version : "0",
+            _gearingTypeId: a[8].replace("gearingtype=", "") !== undefined ? a[8].replace("gearingtype=", "") : "0",
+            _noOfSeats: det.NoOfSeats !== undefined ? det.NoOfSeats : 0,
+            _gears: a[9].replace("gears=", 0),
+            _ccm: a[10].replace("ccm=", 0),
+            _cylinders: a[11].replace("cylinders=", 0),
+            _weight: a[12].replace("weight=", 0),
+            _consumptionmixed: a[13].replace("consumptionmixed=", 0),
+            _consumptioncity: a[14].replace("consumptioncity=", 0),
+            _type: a[7].replace("type=", 0),
+            _consumptionhighway: a[15].replace("consumptionhighway=", 0),
+            _co2emissionmixed: a[16].replace("co2emissionmixed=", 0),
+            _adtype: a[17].replace("adtype=", 0),
+            _emclass: a[18].replace("emclass=", 0),
+            _transm: a[19].replace("transm=", 0),
+            _equi: a[21].replace("equi=", 0),
+            _upholsteryid: a[22].replace("upholsteryid=", 0),
+            _firstreg_mth: a[23].replace("firstreg_mth=", 0),
+            _firstreg_year: a[24].replace("firstreg_year=", 0),
+            _queryString: det.QueryString !== undefined ? det.QueryString : "0"
         };
         return new Detail(detInt);
     }
@@ -259,22 +271,23 @@ export class Copier {
     }
     ;
     postMakes() {
-        $.ajax({
-            "url": "./dataDispatcher.php?postMakes",
-            "method": "POST",
-            "data": {
-                "makes": this.makes
-            }
-        });
+        this.ajaxController.sendPostRequest("./dataDispatcher.php?postMakes", { "makes": this.makes }, () => { });
     }
     postGearingTypes() {
-        this.ajaxController.sendAjaxRequest("POST", `./dataDispatcher.php?postGearingTypes`, JSON.stringify(this.gearingTypes), () => { });
+        this.ajaxController.sendPostRequest("./dataDispatcher.php?postGearingTypes", { "gearingTypes": this.gearingTypes }, () => { });
     }
     postFuel() {
-        this.ajaxController.sendAjaxRequest("POST", `./dataDispatcher.php?postFuel`, JSON.stringify(this.fuel), () => { });
+        this.ajaxController.sendPostRequest("./dataDispatcher.php?postFuel", { "fuel": this.fuel }, () => { });
     }
     postBodyTypes() {
-        this.ajaxController.sendAjaxRequest("POST", `./dataDispatcher.php?postBodyTypes`, JSON.stringify(this.bodyTypes), () => { });
+        this.ajaxController.sendPostRequest("./dataDispatcher.php?postBodyTypes", { "bodyTypes": this.bodyTypes }, () => { });
+    }
+    postModelsDetailsProductions(modelKey) {
+        if (modelKey < this.modelsTotal.length) {
+            this.ajaxController.sendPostRequest("./dataDispatcher.php?postModelsDetailsProductions", { "mdp": this.modelsTotal[modelKey] }, () => {
+                this.postModelsDetailsProductions(modelKey + 1);
+            });
+        }
     }
     /**
      * Metodo Run principale che fa partire il recupero del dati da AS24
