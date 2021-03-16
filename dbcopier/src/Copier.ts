@@ -86,7 +86,7 @@ export class Copier {
             //ciclo ciascun anno da cui carpire i dati, faccio partire una iterazione ricorsiva assincrana per ciascun anno
             for (let anno = yearstart; anno > yearstop; anno--) {
                 this.recursionInstanceModel++;//Incremento delle istanze di ricorsione
-                this.extractModels(120,anno,12,anno,anno-1);//Ciascuna iterazione ricorsiva controlla 1 anno
+                this.extractModels(180,anno,12,anno,anno-1);//Ciascuna iterazione ricorsiva controlla 1 anno
             }
         });
     }
@@ -247,6 +247,18 @@ export class Copier {
         }); 
     }
 
+
+    /**
+     * Se il dato è undefined o non esistente, ritorna null, altrimenti il dato
+     * @param data stringa o intero rapresentante del dato da mostrare
+     * @returns 
+     */
+    private verifyAndSetNull(data){
+        if(data=== undefined)
+        data=null;
+        return data;
+    }
+
     /**
      * Funzione make detail che dati i parametri sottodorma di oggetto json, ne ricava i dati e li trasforma 
      * in una istanza di classe di tipo Detail
@@ -259,41 +271,39 @@ export class Copier {
         //Controlla che ci siano 25 posizioni, perchè quelle sono previste, in caso diverso si buttano i dati.
 
         //per FUTORO
-        //JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
-        let a = det.QueryString !== undefined ? det.QueryString.split("&") : [];
-        if(a.length != 25)
-        a = ["","","","","","","","","","","","","","","","","","","","","","","","",""];
-        
+        let detQuery = JSON.parse('{"' + decodeURI(det.QueryString).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+
         let detInt : DetailInterface = {
-            _buildPeriod: det.BuildPeriod!==undefined ? det.BuildPeriod : "0",
-            _codall : det.CODALL!==undefined ? det.CODALL : 0,
-            _FuelTypeID: det.FuelTypeID!==undefined ? det.FuelTypeID : 0,
-            _hsn : det.HSN !== undefined ? det.HSN : 0,
-            _modelLine: det.ModelLine!==undefined ? det.ModelLine : "0",
-            _powerKW:  det.PowerKW!==undefined ? det.PowerKW : 0,
-            _powerPS: det.PowerPS!==undefined ? det.PowerPS : 0,
-            _schckeId: det.SchwackeId!==undefined ? det.SchwackeId : 0,
-            _tsn: det.TSN!==undefined ? det.TSN : 0,
-            _version: det.Version!==undefined ? det.Version : "0",
-            _gearingTypeId: a[8].replace("gearingtype=", "") !==undefined ? a[8].replace("gearingtype=", "") : "0",
-            _noOfSeats: det.NoOfSeats!==undefined ? det.NoOfSeats : 0,
-            _gears: a[9].replace("gears=", 0),
-            _ccm: a[10].replace("ccm=", 0),
-            _cylinders: a[11].replace("cylinders=", 0),
-            _weight: a[12].replace("weight=", 0),
-            _consumptionmixed: a[13].replace("consumptionmixed=", 0),
-            _consumptioncity: a[14].replace("consumptioncity=", 0),
-            _type: a[7].replace("type=", 0),
-            _consumptionhighway: a[15].replace("consumptionhighway=", 0),
-            _co2emissionmixed: a[16].replace("co2emissionmixed=", 0),
-            _adtype: a[17].replace("adtype=", 0),
-            _emclass: a[18].replace("emclass=", 0),
-            _transm: a[19].replace("transm=", 0),
-            _equi: a[21].replace("equi=", 0),
-            _upholsteryid: a[22].replace("upholsteryid=", 0),
-            _firstreg_mth: a[23].replace("firstreg_mth=", 0),
-            _firstreg_year: a[24].replace("firstreg_year=", 0),
-            _queryString: det.QueryString!==undefined ? det.QueryString : "0" }
+            _buildPeriod: this.verifyAndSetNull(det.BuildPeriod),
+            _codall : this.verifyAndSetNull(det.CODALL),
+            _fuelTypeID: this.verifyAndSetNull(det.FuelTypeID),
+            _hsn : this.verifyAndSetNull(det.HSN),
+            _modelLine: this.verifyAndSetNull(det.ModelLine),
+            _powerKW:  this.verifyAndSetNull(det.PowerKW),
+            _powerPS: this.verifyAndSetNull(det.PowerPS),
+            _schckeId: this.verifyAndSetNull(det.SchckeId),
+            _tsn: this.verifyAndSetNull(det.TSN),
+            _version: this.verifyAndSetNull(det.Version),
+            _gearingTypeId: this.verifyAndSetNull(det.GearingTypeId),
+            _noOfSeats: this.verifyAndSetNull(det.NoOfSeats),
+            _gears: this.verifyAndSetNull(detQuery.gears),
+            _ccm: this.verifyAndSetNull(detQuery.ccm),
+            _cylinders: this.verifyAndSetNull(detQuery.cylinders),
+            _weight: this.verifyAndSetNull(detQuery.weight),
+            _consumptionMixed: this.verifyAndSetNull(detQuery.consumptionmixed),
+            _consumptionCity: this.verifyAndSetNull(detQuery.consumptionc),
+            _type: this.verifyAndSetNull(detQuery.type),
+            _consumptionHighway: this.verifyAndSetNull(detQuery.consumptionhighway),
+            _co2EmissionMixed: this.verifyAndSetNull(detQuery.co2emissionmixed),
+            _adtype: this.verifyAndSetNull(detQuery.adtype),
+            _emClass: this.verifyAndSetNull(detQuery.emclass),
+            _transm: this.verifyAndSetNull(detQuery.transm),
+            _equi: this.verifyAndSetNull(detQuery.equi),
+            _upholsteryid: this.verifyAndSetNull(detQuery.upholsteryid),
+            _firstreg_mth: this.verifyAndSetNull(detQuery.firstreg_mth),
+            _firstreg_year: this.verifyAndSetNull(detQuery.firstreg_year),
+            _queryString: this.verifyAndSetNull(det.QueryString)
+        }
         return new Detail(detInt);
     }
 
