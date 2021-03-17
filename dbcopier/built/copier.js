@@ -21,6 +21,8 @@ export class Copier {
         this.recursionInstanceModel = 0;
         //Numero di istanzze ricorsive di ricerca dei dettagli
         this.recursionInstanceDetail = 0;
+        //
+        this.recursionInstanceMPD = 0;
         //Variabile che serve per la gestione della percentuale dei modelli esaminati
         //la percentuale che si realizza è sui modelli esmainati in totale sui totale aventi
         //per trovare i Details per ogni Model
@@ -46,7 +48,7 @@ export class Copier {
             //salvo i risultati
             this.staticDataJS = res;
             this.makes = this.staticDataJS.makes;
-            this.models = this.staticDataJS.models;
+            this.modelsName = this.staticDataJS.models;
             this.gearingTypes = this.staticDataJS.gearingTypes;
             this.fuel = this.staticDataJS.fuel;
             this.bodyTypes = this.staticDataJS.bodyTypes;
@@ -55,13 +57,14 @@ export class Copier {
             this.postGearingTypes();
             this.postFuel();
             this.postBodyTypes();
+            //Post ModelName
             //Extract Model From makes for each make
             console.log("NUMERO MAKES:" + this.makes.length);
             $("#dateRecuperoDati").html("<span>[" + yearstart + "-" + (yearstop) + "[</span>");
             //ciclo ciascun anno da cui carpire i dati, faccio partire una iterazione ricorsiva assincrana per ciascun anno
             for (let anno = yearstart; anno > yearstop; anno--) {
                 this.recursionInstanceModel++; //Incremento delle istanze di ricorsione
-                this.extractModels(150, anno, 1, anno, anno - 1); //Ciascuna iterazione ricorsiva controlla 1 anno
+                this.extractModels(0, anno, 1, anno, anno - 1); //Ciascuna iterazione ricorsiva controlla 1 anno
             }
         });
     }
@@ -156,8 +159,16 @@ export class Copier {
                     }
                 }
                 */
-                this.recursionInstanceDetail = 1;
-                this.getDetailForModel(0, this.modelsTotal.length);
+                else {
+                    const step = 6;
+                    this.recursionInstanceDetail = step;
+                    this.getDetailForModel(0, this.modelsTotal.length, step);
+                    this.getDetailForModel(1, this.modelsTotal.length, step);
+                    this.getDetailForModel(2, this.modelsTotal.length, step);
+                    this.getDetailForModel(3, this.modelsTotal.length, step);
+                    this.getDetailForModel(4, this.modelsTotal.length, step);
+                    this.getDetailForModel(5, this.modelsTotal.length, step);
+                }
             }
         }
     }
@@ -173,7 +184,7 @@ export class Copier {
      * @param modelKey chiave del array di modelli , indice del modello da analizzare e dettagliare
      * @param modelEndKey chiave del array fino a fine prendere i dettagli
      */
-    getDetailForModel(modelKey, modelEndKey) {
+    getDetailForModel(modelKey, modelEndKey, step) {
         //Aggiornamento Percentuale caricamento dettagli
         let percentuale = Math.round((++this.noOfModelExamined * 100 / this.modelsTotal.length) * 100) / 100;
         $("#percDetail").html(percentuale + "");
@@ -191,8 +202,8 @@ export class Copier {
             //Set Details of Model
             m.setDetails(dets);
             //caso ric
-            if (modelKey + 1 < modelEndKey) {
-                this.getDetailForModel(modelKey + 1, modelEndKey);
+            if (modelKey + step < modelEndKey) {
+                this.getDetailForModel(modelKey + step, modelEndKey, step);
                 //Caso base
             }
             else {
@@ -203,8 +214,15 @@ export class Copier {
                 //Questa è l'ultima istanza ricorsiva, si eleborano i dati
                 else {
                     $("#percDetail").html(100 + "");
-                    this.postModelsDetailsProductions(0);
-                    console.log(this.modelsTotal);
+                    this.noOfModelExamined = 0;
+                    const step = 6;
+                    this.recursionInstanceMPD = step;
+                    this.postModelsDetailsProductions(0, step);
+                    this.postModelsDetailsProductions(1, step);
+                    this.postModelsDetailsProductions(2, step);
+                    this.postModelsDetailsProductions(3, step);
+                    this.postModelsDetailsProductions(4, step);
+                    this.postModelsDetailsProductions(5, step);
                 }
             }
         });
@@ -226,11 +244,14 @@ export class Copier {
      * @returns Oggetto Detail
      */
     makeDetail(det) {
-        //Il parametro QueryString contiene informazioni utili, Da qui noi ne prendiamo le informazioni con le
-        //seguenti righe
-        //Controlla che ci siano 25 posizioni, perchè quelle sono previste, in caso diverso si buttano i dati.
-        //per FUTORO
-        let detQuery = JSON.parse('{"' + decodeURI(det.QueryString).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}');
+        let detQuery = null;
+        if (det.QueryString !== undefined && det.QueryString !== "" && det.QueryString !== null) {
+            //Caso &firstreg_mth=07&firstreg_year=2020
+            if (det.QueryString.charAt(0) == '&')
+                det.QueryString = det.QueryString.substring(1, det.QueryString.length);
+            //Caso normale
+            detQuery = JSON.parse('{"' + decodeURI(det.QueryString).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}');
+        }
         let detInt = {
             _buildPeriod: this.verifyAndSetNull(det.BuildPeriod),
             _codall: this.verifyAndSetNull(det.CODALL),
@@ -249,7 +270,7 @@ export class Copier {
             _cylinders: this.verifyAndSetNull(detQuery.cylinders),
             _weight: this.verifyAndSetNull(detQuery.weight),
             _consumptionMixed: this.verifyAndSetNull(detQuery.consumptionmixed),
-            _consumptionCity: this.verifyAndSetNull(detQuery.consumptionc),
+            _consumptionCity: this.verifyAndSetNull(detQuery.consumptioncity),
             _type: this.verifyAndSetNull(detQuery.type),
             _consumptionHighway: this.verifyAndSetNull(detQuery.consumptionhighway),
             _co2EmissionMixed: this.verifyAndSetNull(detQuery.co2emissionmixed),
@@ -293,11 +314,20 @@ export class Copier {
     postBodyTypes() {
         this.ajaxController.sendPostRequest("./dataDispatcher.php?postBodyTypes", { "bodyTypes": this.bodyTypes }, () => { });
     }
-    postModelsDetailsProductions(modelKey) {
+    postModelsDetailsProductions(modelKey, step) {
+        let percentuale = Math.round((++this.noOfModelExamined * 100 / this.modelsTotal.length) * 100) / 100;
+        $("#percPostMPD").html(percentuale + "");
         if (modelKey < this.modelsTotal.length) {
             this.ajaxController.sendPostRequest("./dataDispatcher.php?postModelsDetailsProductions", { "mdp": this.modelsTotal[modelKey] }, () => {
-                this.postModelsDetailsProductions(modelKey + 1);
+                this.postModelsDetailsProductions(modelKey + step, step);
             });
+        }
+        else {
+            if (this.recursionInstanceMPD > 1) {
+                this.recursionInstanceMPD--;
+            }
+            else
+                $("#percPostMPD").html("100"); //FINE
         }
     }
     /**

@@ -11,18 +11,11 @@ class DataDispatcher{
     }
 
     /**
-     * Funzione InsertQuery che sovracarica la funzione query di Database ed in più fa un controllo del errore
-     * Nel caso trovi un errore nel inserimento della query, stampa la query stessa abbianata al errore
+     * Funzione InsertQuery che sovracarica la funzione query
      */
     private function insertQuery($querystr){
         $res = $this->db->query($querystr);
-        print_r($querystr." | ");
-        if(!$res){
-            
-            print_r("Error description: " . $this->db->getConn()->error);
-            print_r("\n");
-            header("HTTP/1.0 404 Not Found");
-        }
+        return $res;
     }
 
     private function makeHTTPRequest($url){
@@ -95,9 +88,9 @@ class DataDispatcher{
         $mdp["makeID"] = !empty($mdp["makeID"]) ? $mdp["makeID"] : "NULL";
 
         $querystr = "INSERT INTO CarModel (idModel, makeID, noOfDoors,bodyTypeID) VALUES ($mdp[modelID], $mdp[makeID] , $mdp[noOfDoors], $mdp[bodyTypeID]);";
-        $this->insertQuery($querystr);
+        $this->verifyInsert($this->insertQuery($querystr),$querystr);
         $querystr = "INSERT INTO Production (idModel, month, year) VALUES ($mdp[modelID], $mdp[month], $mdp[year]);";
-        $this->insertQuery($querystr);
+        $this->verifyInsert($this->insertQuery($querystr),$querystr);
 
         foreach ($mdp["details"] as $detdata){
             $detail = $detdata["data"];
@@ -125,12 +118,21 @@ class DataDispatcher{
             //Automatic Quotess
             $querystr = "INSERT INTO CarDetail (codall, buildPeriod, version, powerKW, powerPS, noOfSeats, gears, ccm, cylinders, weight, consumptionMixed, consumptionCity, consumptionHighway, co2EmissionMixed, emClass, transm, idModel, fuelTypeID, gearingTypeID, month, year)
             VALUES ($detail[_codall], $detail[_buildPeriod], $detail[_version], $detail[_powerKW], $detail[_powerPS], $detail[_noOfSeats], $detail[_gears], $detail[_ccm], $detail[_cylinders], $detail[_weight], $detail[_consumptionMixed], $detail[_consumptionCity], $detail[_consumptionHighway], $detail[_co2EmissionMixed], $detail[_transm],$detail[_emClass], $mdp[modelID], $detail[_fuelTypeID], $detail[_gearingTypeId], $mdp[month], $mdp[year]);";
-            $this->insertQuery($querystr);
+            $this->verifyInsert($this->insertQuery($querystr),$querystr);
         }
     }
 
-
-
+    /**
+     * 
+     */
+    private function verifyInsert($res,$querystr){
+        if(!$res){
+            print_r($querystr." | ");
+            print_r("Error description: " . $this->db->getConn()->error);
+            print_r("\n");
+            header("HTTP/1.0 404 Not Found");
+        }
+    }
 
 }
 
