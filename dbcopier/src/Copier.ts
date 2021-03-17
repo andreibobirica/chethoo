@@ -86,7 +86,7 @@ export class Copier {
             //ciclo ciascun anno da cui carpire i dati, faccio partire una iterazione ricorsiva assincrana per ciascun anno
             for (let anno = yearstart; anno > yearstop; anno--) {
                 this.recursionInstanceModel++;//Incremento delle istanze di ricorsione
-                this.extractModels(180,anno,12,anno,anno-1);//Ciascuna iterazione ricorsiva controlla 1 anno
+                this.extractModels(150,anno,1,anno,anno-1);//Ciascuna iterazione ricorsiva controlla 1 anno
             }
         });
     }
@@ -154,13 +154,13 @@ export class Copier {
                     if(month<12)
                     this.extractModels(makesKey,year,month+1,yearstart,yearstop);
                     else
-                    this.extractModels(makesKey,year-1,12,yearstart,yearstop);
+                    this.extractModels(makesKey,year-1,1,yearstart,yearstop);
                 }); 
             }else{
                 let percentuale : number = Math.round((makesKey*100/this.makes.length) * 100) / 100;
                 //console.log("Stato Download Modelli sotto "+yearstart+": "+percentuale+"%");
                 $("#percModel").html(percentuale+"");
-                this.extractModels(makesKey+1,yearstart,12,yearstart,yearstop);
+                this.extractModels(makesKey+1,yearstart,1,yearstart,yearstop);
             }     
         }else{
             //Caso base, ma ci sono ancora iterazioni ricorsive operanti
@@ -177,6 +177,7 @@ export class Copier {
                 if(this.modelsTotal.length<=0)
                     console.log("Nessun modello da analizzare");
                 //Se ci sono modelli
+                /*
                 else{
                     for (let minizio : number = 0, stop:boolean = false; minizio < 6 && !stop; minizio++) {
                         //Controllo degli indici del modello
@@ -189,6 +190,9 @@ export class Copier {
                         }
                     }
                 }
+                */
+                this.recursionInstanceDetail=1;
+                this.getDetailForModel(0,this.modelsTotal.length);
             }
         }
     }
@@ -229,8 +233,8 @@ export class Copier {
             m.setDetails(dets);
 
             //caso ric
-            if(modelKey+6 < modelEndKey){
-                this.getDetailForModel(modelKey+6,modelEndKey);
+            if(modelKey+1 < modelEndKey){
+                this.getDetailForModel(modelKey+1,modelEndKey);
             //Caso base
             }else{
                 //Ci sono ulteriori istanze ricorsive che devono ancora terminare
@@ -254,7 +258,7 @@ export class Copier {
      * @returns 
      */
     private verifyAndSetNull(data){
-        if(data=== undefined)
+        if(data===undefined)
         data=null;
         return data;
     }

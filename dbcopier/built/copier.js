@@ -61,7 +61,7 @@ export class Copier {
             //ciclo ciascun anno da cui carpire i dati, faccio partire una iterazione ricorsiva assincrana per ciascun anno
             for (let anno = yearstart; anno > yearstop; anno--) {
                 this.recursionInstanceModel++; //Incremento delle istanze di ricorsione
-                this.extractModels(180, anno, 12, anno, anno - 1); //Ciascuna iterazione ricorsiva controlla 1 anno
+                this.extractModels(150, anno, 1, anno, anno - 1); //Ciascuna iterazione ricorsiva controlla 1 anno
             }
         });
     }
@@ -118,14 +118,14 @@ export class Copier {
                     if (month < 12)
                         this.extractModels(makesKey, year, month + 1, yearstart, yearstop);
                     else
-                        this.extractModels(makesKey, year - 1, 12, yearstart, yearstop);
+                        this.extractModels(makesKey, year - 1, 1, yearstart, yearstop);
                 });
             }
             else {
                 let percentuale = Math.round((makesKey * 100 / this.makes.length) * 100) / 100;
                 //console.log("Stato Download Modelli sotto "+yearstart+": "+percentuale+"%");
                 $("#percModel").html(percentuale + "");
-                this.extractModels(makesKey + 1, yearstart, 12, yearstart, yearstop);
+                this.extractModels(makesKey + 1, yearstart, 1, yearstart, yearstop);
             }
         }
         else {
@@ -142,18 +142,22 @@ export class Copier {
                 if (this.modelsTotal.length <= 0)
                     console.log("Nessun modello da analizzare");
                 //Se ci sono modelli
-                else {
-                    for (let minizio = 0, stop = false; minizio < 6 && !stop; minizio++) {
+                /*
+                else{
+                    for (let minizio : number = 0, stop:boolean = false; minizio < 6 && !stop; minizio++) {
                         //Controllo degli indici del modello
-                        if (minizio >= this.modelsTotal.length) {
+                        if(minizio>=this.modelsTotal.length){
                             stop = true;
                         }
-                        else {
+                        else{
                             this.recursionInstanceDetail++;
-                            this.getDetailForModel(minizio, this.modelsTotal.length);
+                            this.getDetailForModel(minizio,this.modelsTotal.length);
                         }
                     }
                 }
+                */
+                this.recursionInstanceDetail = 1;
+                this.getDetailForModel(0, this.modelsTotal.length);
             }
         }
     }
@@ -187,8 +191,8 @@ export class Copier {
             //Set Details of Model
             m.setDetails(dets);
             //caso ric
-            if (modelKey + 6 < modelEndKey) {
-                this.getDetailForModel(modelKey + 6, modelEndKey);
+            if (modelKey + 1 < modelEndKey) {
+                this.getDetailForModel(modelKey + 1, modelEndKey);
                 //Caso base
             }
             else {

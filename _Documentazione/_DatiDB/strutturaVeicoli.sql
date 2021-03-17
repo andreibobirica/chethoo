@@ -24,10 +24,10 @@ CREATE TABLE GearingType
 
 CREATE TABLE CarModel
 (
-    idModel VARCHAR(5) PRIMARY KEY,
-    modelName VARCHAR(50) NOT NULL,
+    idModel VARCHAR(10) PRIMARY KEY,
     noOfDoors INTEGER(1) NOT NULL,
     makeID VARCHAR(5) NOT NULL,
+    bodyTypeID VARCHAR(2) NOT NULL,
     FOREIGN KEY (makeID) REFERENCES CarMake (makeID)
         ON UPDATE CASCADE
         ON DELETE CASCADE
@@ -35,7 +35,7 @@ CREATE TABLE CarModel
 
 CREATE TABLE Production
 (
-    idModel VARCHAR(5),
+    idModel VARCHAR(10),
     month CHAR(2),
     year CHAR(4),
     PRIMARY KEY (idModel, month, year),
@@ -46,7 +46,6 @@ CREATE TABLE Production
 
 CREATE TABLE CarDetail
 (
-    idDetail SERIAL PRIMARY KEY,
     codall VARCHAR(6),
     buildPeriod VARCHAR(50),
     version VARCHAR(100) ,
@@ -62,11 +61,13 @@ CREATE TABLE CarDetail
     consumptionHighway DOUBLE PRECISION,
     co2EmissionMixed DOUBLE PRECISION,
     emClass VARCHAR(10),
-    idModel VARCHAR(5) NOT NULL,
+    transm INTEGER,
+    idModel VARCHAR(10) NOT NULL,
     fuelTypeID CHAR(1) ,
     gearingTypeID CHAR(1) ,
     month CHAR(2) NOT NULL,
     year CHAR(4) NOT NULL,
+    PRIMARY KEY (idModel, month, year, version, codall, buildPeriod, fuelTypeID),
     FOREIGN KEY (idModel) REFERENCES CarModel (idModel)
         ON UPDATE CASCADE
         ON DELETE CASCADE,

@@ -16,8 +16,9 @@ class DataDispatcher{
      */
     private function insertQuery($querystr){
         $res = $this->db->query($querystr);
+        print_r($querystr." | ");
         if(!$res){
-            print_r($querystr." | ");
+            
             print_r("Error description: " . $this->db->getConn()->error);
             print_r("\n");
             header("HTTP/1.0 404 Not Found");
@@ -87,15 +88,15 @@ class DataDispatcher{
         //Modifico per rendere univoco il ModelID
         $mdp["modelID"] = !empty($mdp["modelID"]) ? "'$mdp[modelID]$mdp[noOfDoors]$mdp[bodyTypeID]'" : "NULL";//String
         
-        $mdp["month"] = !empty($mdp["month"]) ? "'$mdp[month]'" : "NULL";//String
+        $mdp["month"] = !empty($mdp["month"]) ? "'$zero$mdp[month]'" : "NULL";//String
         $mdp["year"] = !empty($mdp["year"]) ? "'$mdp[year]'" : "NULL";//String
         $mdp["noOfDoors"] = !empty($mdp["noOfDoors"]) ? $mdp["noOfDoors"] : "NULL";
         $mdp["bodyTypeID"] = !empty($mdp["bodyTypeID"]) ? "'$mdp[bodyTypeID]'" : "NULL";//String
         $mdp["makeID"] = !empty($mdp["makeID"]) ? $mdp["makeID"] : "NULL";
 
-        $querystr = "INSERT INTO CarModel (idModel, makeID) VALUES ($mdp[modelID], $mdp[makeID]);";
+        $querystr = "INSERT INTO CarModel (idModel, makeID, noOfDoors,bodyTypeID) VALUES ($mdp[modelID], $mdp[makeID] , $mdp[noOfDoors], $mdp[bodyTypeID]);";
         $this->insertQuery($querystr);
-        $querystr = "INSERT INTO Production (idModel, month, year) VALUES ($mdp[modelID], $zero$mdp[month], $mdp[year]);";
+        $querystr = "INSERT INTO Production (idModel, month, year) VALUES ($mdp[modelID], $mdp[month], $mdp[year]);";
         $this->insertQuery($querystr);
 
         foreach ($mdp["details"] as $detdata){
@@ -103,7 +104,7 @@ class DataDispatcher{
             
             $detail["_codall"] = !empty($detail["_codall"]) ? "'$detail[_codall]'" : "NULL";//String
             $detail["_buildPeriod"] = !empty( $detail["_buildPeriod"]) ? "'$detail[_buildPeriod]'" : "NULL";//String
-            $detail["_version"] = !empty($detail["_version"]) ? "'$detail[_version]'" : "NULL";//String
+            $detail["_version"] = !empty($detail["_version"]) ? "'$detail[_version]'" : "'Other'";//String
             $detail["_powerKW"] = !empty($detail["_powerKW"]) ? $detail["_powerKW"] : "NULL";
             $detail["_powerPS"] = !empty($detail["_powerPS"]) ? $detail["_powerPS"] : "NULL";
             $detail["_noOfSeats"] = !empty($detail["_noOfSeats"]) ? $detail["_noOfSeats"] : "NULL";
@@ -111,19 +112,19 @@ class DataDispatcher{
             $detail["_ccm"] = !empty($detail["_ccm"]) ? $detail["_ccm"] : "NULL";
             $detail["_cylinders"] = !empty($detail["_cylinders"]) ? $detail["_cylinders"] : "NULL";
             $detail["_weight"] = !empty($detail["_weight"]) ? $detail["_weight"] : "NULL";
-            $detail["_consumptionmixed"] = !empty($detail["_consumptionmixed"]) ? $detail["_consumptionmixed"] : "NULL";
-            $detail["_consumptioncity"] = !empty($detail["_consumptioncity"]) ? $detail["_consumptioncity"] : "NULL";
-            $detail["_consumptionhighway"] = !empty($detail["_consumptionhighway"]) ? $detail["_consumptionhighway"] : "NULL";
-            $detail["_co2emissionmixed"] = !empty($detail["_co2emissionmixed"]) ? $detail["_co2emissionmixed"] : "NULL";
+            $detail["_consumptionMixed"] = !empty($detail["_consumptionMixed"]) ? $detail["_consumptionMixed"] : "NULL";
+            $detail["_consumptionCity"] = !empty($detail["_consumptionCity"]) ? $detail["_consumptionCity"] : "NULL";
+            $detail["_consumptionHighway"] = !empty($detail["_consumptionHighway"]) ? $detail["_consumptionHighway"] : "NULL";
+            $detail["_co2EmissionMixed"] = !empty($detail["_co2EmissionMixed"]) ? $detail["_co2EmissionMixed"] : "NULL";
             $detail["_transm"] = !empty($detail["_trasm"]) ? $detail["_trasm"] : "NULL";
-            $detail["_emclass"] = !empty($detail["_emclass"]) ? "'$detail[_emclass]'" : "NULL";//String
-            $detail["_FuelTypeID"] = !empty($detail["_FuelTypeID"]) ? "'$detail[_FuelTypeID]'" : "NULL";//String
+            $detail["_emClass"] = !empty($detail["_emClass"]) ? "'$detail[_emClass]'" : "NULL";//String
+            $detail["_fuelTypeID"] = !empty($detail["_fuelTypeID"]) ? "'$detail[_fuelTypeID]'" : "O";//String OTHER
             $detail["_gearingTypeId"] = !empty($detail["_gearingTypeId"]) ? "'$detail[_gearingTypeId]'" : "NULL";//String
            
 
             //Automatic Quotess
             $querystr = "INSERT INTO CarDetail (codall, buildPeriod, version, powerKW, powerPS, noOfSeats, gears, ccm, cylinders, weight, consumptionMixed, consumptionCity, consumptionHighway, co2EmissionMixed, emClass, transm, idModel, fuelTypeID, gearingTypeID, month, year)
-            VALUES ($detail[_codall], $detail[_buildPeriod], $detail[_version], $detail[_powerKW], $detail[_powerPS], $detail[_noOfSeats], $detail[_gears], $detail[_ccm], $detail[_cylinders], $detail[_weight], $detail[_consumptionmixed], $detail[_consumptioncity], $detail[_consumptionhighway], $detail[_co2emissionmixed], $detail[_transm],$detail[_emclass], $mdp[modelID], $detail[_FuelTypeID], $detail[_gearingTypeId], $zero$mdp[month], $mdp[year]);";
+            VALUES ($detail[_codall], $detail[_buildPeriod], $detail[_version], $detail[_powerKW], $detail[_powerPS], $detail[_noOfSeats], $detail[_gears], $detail[_ccm], $detail[_cylinders], $detail[_weight], $detail[_consumptionMixed], $detail[_consumptionCity], $detail[_consumptionHighway], $detail[_co2EmissionMixed], $detail[_transm],$detail[_emClass], $mdp[modelID], $detail[_fuelTypeID], $detail[_gearingTypeId], $mdp[month], $mdp[year]);";
             $this->insertQuery($querystr);
         }
     }
