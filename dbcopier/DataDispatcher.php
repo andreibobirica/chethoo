@@ -88,7 +88,7 @@ class DataDispatcher{
         $mdp["makeID"] = !empty($mdp["makeID"]) ? $mdp["makeID"] : "NULL";
 
         $querystr = "INSERT INTO CarModel (idModel, makeID, noOfDoors,bodyTypeID) VALUES ($mdp[modelID], $mdp[makeID] , $mdp[noOfDoors], $mdp[bodyTypeID]);";
-        $this->verifyInsert($this->insertQuery($querystr),$querystr);
+        $this->insertQuery($querystr);
         $querystr = "INSERT INTO Production (idModel, month, year) VALUES ($mdp[modelID], $mdp[month], $mdp[year]);";
         $this->verifyInsert($this->insertQuery($querystr),$querystr);
 

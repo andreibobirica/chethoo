@@ -89,7 +89,7 @@ export class Copier {
             //ciclo ciascun anno da cui carpire i dati, faccio partire una iterazione ricorsiva assincrana per ciascun anno
             for (let anno = yearstart; anno > yearstop; anno--) {
                 this.recursionInstanceModel++;//Incremento delle istanze di ricorsione
-                this.extractModels(0,anno,1,anno,anno-1);//Ciascuna iterazione ricorsiva controlla 1 anno
+                this.extractModels(170,anno,11,anno,anno-1);//Ciascuna iterazione ricorsiva controlla 1 anno
             }
         });
     }
@@ -157,13 +157,13 @@ export class Copier {
                     if(month<12)
                     this.extractModels(makesKey,year,month+1,yearstart,yearstop);
                     else
-                    this.extractModels(makesKey,year-1,1,yearstart,yearstop);
+                    this.extractModels(makesKey,year-1,11,yearstart,yearstop);
                 }); 
             }else{
                 let percentuale : number = Math.round((makesKey*100/this.makes.length) * 100) / 100;
                 //console.log("Stato Download Modelli sotto "+yearstart+": "+percentuale+"%");
                 $("#percModel").html(percentuale+"");
-                this.extractModels(makesKey+1,yearstart,1,yearstart,yearstop);
+                this.extractModels(makesKey+1,yearstart,11,yearstart,yearstop);
             }     
         }else{
             //Caso base, ma ci sono ancora iterazioni ricorsive operanti
