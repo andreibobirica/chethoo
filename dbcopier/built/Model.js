@@ -5,9 +5,10 @@ export class Model {
     /**
      * Costruttore
      */
-    constructor(_bodyTypeID, _modelID, _noOfDoors, _makeID, _year, _month) {
+    constructor(_bodyTypeID, _modelID, _modelName, _noOfDoors, _makeID, _year, _month) {
         this.bodyTypeID = _bodyTypeID;
         this.modelID = _modelID;
+        this.modelName = _modelName;
         this.noOfDoors = _noOfDoors;
         this.makeID = _makeID;
         this.year = _year;
@@ -17,6 +18,7 @@ export class Model {
     getMakeID() { return this.makeID; }
     getBodyTypeID() { return this.bodyTypeID; }
     getModelID() { return this.modelID; }
+    getModelName() { return this.modelName; }
     getYear() { return this.year; }
     getMonth() { return this.month; }
     /**

@@ -5,6 +5,7 @@ import { Detail } from "./Detail";
 export class Model{
     private bodyTypeID: number;
     private modelID: number;
+    private modelName: string;
     private noOfDoors: number;
     private makeID: number;
     //Data
@@ -18,15 +19,17 @@ export class Model{
     public getMakeID():number{return this.makeID;}
     public getBodyTypeID():number{return this.bodyTypeID;}
     public getModelID():number{return this.modelID;}
+    public getModelName():string{return this.modelName;}
     public getYear():number{return this.year;}
     public getMonth():number{return this.month;}
     
     /**
      * Costruttore
      */
-    public constructor(_bodyTypeID: number,_modelID: number,_noOfDoors: number, _makeID: number, _year: number, _month:number){
+    public constructor(_bodyTypeID: number,_modelID: number,_modelName: string,_noOfDoors: number, _makeID: number, _year: number, _month:number){
         this.bodyTypeID = _bodyTypeID;
         this.modelID = _modelID;
+        this.modelName = _modelName;
         this.noOfDoors = _noOfDoors;
         this.makeID = _makeID;
         this.year = _year;

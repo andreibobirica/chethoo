@@ -51,6 +51,30 @@ export class Copier {
         this.ajaxController = new Ajax();
     }
 
+
+    /**
+     * Metodo che prende i dati delle moto complessivi da AS24 e non fa altro che postarli chiamando postMotoData
+     * Viene chiedo e successivamente rimandato al backend perchè così si autoconverte da JSON string a URI parameter leggibili da PHP
+     */
+    private getStaticDataJSfrom24Moto():void{
+        this.ajaxController.sendAjaxRequest("GET","./dataDispatcher.php?staticDataJSMoto",null,
+        (res: any): void => {
+            if(res.makes !== undefined)
+            this.postMotoData(res);
+        });
+    }
+
+    /**
+     * Metodo che posta i dati delle moto nel DB
+     * @param res dati delle moto da pubblicare, sotto forma any perchè direttamente ricevuti da AS24
+     */
+    private postMotoData(res:any):void{
+        this.ajaxController.sendPostRequest(
+            "./dataDispatcher.php?postMoto",
+            {"makes": res.makes},
+            () => {});
+    }
+
     /**
      * Metodo che fa una richiesta ad AS24 per i dati statici
      * Successivamente smista i dati in sotto oggetti più facilmente categorizzabili
@@ -76,6 +100,9 @@ export class Copier {
             this.fuel = this.staticDataJS.fuel;
             this.bodyTypes = this.staticDataJS.bodyTypes;
 
+            //Remove repeated makes
+            this.removeDuplicatesMakes()
+
             //Invio dei dati statici al DB
             this.postMakes();
             this.postGearingTypes();
@@ -89,9 +116,41 @@ export class Copier {
             //ciclo ciascun anno da cui carpire i dati, faccio partire una iterazione ricorsiva assincrana per ciascun anno
             for (let anno = yearstart; anno > yearstop; anno--) {
                 this.recursionInstanceModel++;//Incremento delle istanze di ricorsione
-                this.extractModels(170,anno,11,anno,anno-1);//Ciascuna iterazione ricorsiva controlla 1 anno
+                this.extractModels(0,anno,1,anno,anno-1);//Ciascuna iterazione ricorsiva controlla 1 anno
             }
         });
+    }
+
+    /**
+     * Dato l'array di make this.makes dato dal db di AS24 lo elabora e ne rimuove gli elementi doppi, già 
+     * preventivamente identificati ed elencati all'interno del corpo del metodo.
+     */
+    private removeDuplicatesMakes():void{
+        let listRepeated: string[] = ["Audi","BMW","Fiat","Mercede-Benz","Volkswagen",];
+        //ciclo repeated
+        listRepeated.forEach(makeRepeated => {
+            let stop : boolean= false;
+            //ciclo makes
+            for (let i = 0; i < this.makes.length && !stop; i++) {
+                if(this.makes[i].MakeName==makeRepeated){
+                    this.makes.splice(i,1);
+                    stop=true;
+                } 
+            }
+        });
+    }
+
+
+
+    /**
+     * Data un intero id identificativo del ID del Model lo cerca all'interno dell'array di oggetti modelName
+     * e ritorna il nome del modello, nel caso il nome non sia trovato ritorna la stringa Other
+     * @param id ID di cui trovare il Name del Model
+     */
+    private getModelNameFromID(id:number):string{
+        if(this.modelsName[id]!==undefined)
+        return this.modelsName[id];
+        return "Other";
     }
 
     /**
@@ -104,8 +163,9 @@ export class Copier {
     private insertModel(element:any, makeID:number, year:number, month:number):void{
         this.modelsTotal.push(
             new Model(element.BodyTypeID,
-            element.ModelID,
-            element.NoOfDoors,
+            (element.ModelID as number),
+            this.getModelNameFromID((element.ModelID as number)),
+            element.NoOfDoors as number,
             makeID,
             year,
             month));
@@ -157,13 +217,13 @@ export class Copier {
                     if(month<12)
                     this.extractModels(makesKey,year,month+1,yearstart,yearstop);
                     else
-                    this.extractModels(makesKey,year-1,11,yearstart,yearstop);
+                    this.extractModels(makesKey,year-1,1,yearstart,yearstop);
                 }); 
             }else{
                 let percentuale : number = Math.round((makesKey*100/this.makes.length) * 100) / 100;
                 //console.log("Stato Download Modelli sotto "+yearstart+": "+percentuale+"%");
                 $("#percModel").html(percentuale+"");
-                this.extractModels(makesKey+1,yearstart,11,yearstart,yearstop);
+                this.extractModels(makesKey+1,yearstart,1,yearstart,yearstop);
             }     
         }else{
             //Caso base, ma ci sono ancora iterazioni ricorsive operanti
@@ -180,20 +240,6 @@ export class Copier {
                 if(this.modelsTotal.length<=0)
                     console.log("Nessun modello da analizzare");
                 //Se ci sono modelli
-                /*
-                else{
-                    for (let minizio : number = 0, stop:boolean = false; minizio < 6 && !stop; minizio++) {
-                        //Controllo degli indici del modello
-                        if(minizio>=this.modelsTotal.length){
-                            stop = true;
-                        }
-                        else{
-                            this.recursionInstanceDetail++;
-                            this.getDetailForModel(minizio,this.modelsTotal.length);
-                        }
-                    }
-                }
-                */
                 else{
                     const step : number = 6;
                     this.recursionInstanceDetail=step;
@@ -408,6 +454,9 @@ export class Copier {
      */
     public run(){
         //Prendo i dati statici dal DB 24
+        //Moto
+        this.getStaticDataJSfrom24Moto();
+        //Auto
         this.getStaticDataJSfrom24(this.getUrlParameter("yearstart"),this.getUrlParameter("yearstop"));
         //Ulteriori istruzioni eseguite nel suo callback
     }

@@ -80,14 +80,15 @@ class DataDispatcher{
 
         //Modifico per rendere univoco il ModelID
         $mdp["modelID"] = !empty($mdp["modelID"]) ? "'$mdp[modelID]$mdp[noOfDoors]$mdp[bodyTypeID]'" : "NULL";//String
-        
+
+        $mdp["modelName"] = !empty($mdp["modelName"]) ? "'$mdp[modelName]'" : "NULL";//String        
         $mdp["month"] = !empty($mdp["month"]) ? "'$zero$mdp[month]'" : "NULL";//String
         $mdp["year"] = !empty($mdp["year"]) ? "'$mdp[year]'" : "NULL";//String
         $mdp["noOfDoors"] = !empty($mdp["noOfDoors"]) ? $mdp["noOfDoors"] : "NULL";
         $mdp["bodyTypeID"] = !empty($mdp["bodyTypeID"]) ? "'$mdp[bodyTypeID]'" : "NULL";//String
         $mdp["makeID"] = !empty($mdp["makeID"]) ? $mdp["makeID"] : "NULL";
 
-        $querystr = "INSERT INTO CarModel (idModel, makeID, noOfDoors,bodyTypeID) VALUES ($mdp[modelID], $mdp[makeID] , $mdp[noOfDoors], $mdp[bodyTypeID]);";
+        $querystr = "INSERT INTO CarModel (idModel, modelName, makeID, noOfDoors,bodyTypeID) VALUES ($mdp[modelID], $mdp[modelName], $mdp[makeID] , $mdp[noOfDoors], $mdp[bodyTypeID]);";
         $this->insertQuery($querystr);
         $querystr = "INSERT INTO Production (idModel, month, year) VALUES ($mdp[modelID], $mdp[month], $mdp[year]);";
         $this->verifyInsert($this->insertQuery($querystr),$querystr);
@@ -109,7 +110,7 @@ class DataDispatcher{
             $detail["_consumptionCity"] = !empty($detail["_consumptionCity"]) ? $detail["_consumptionCity"] : "NULL";
             $detail["_consumptionHighway"] = !empty($detail["_consumptionHighway"]) ? $detail["_consumptionHighway"] : "NULL";
             $detail["_co2EmissionMixed"] = !empty($detail["_co2EmissionMixed"]) ? $detail["_co2EmissionMixed"] : "NULL";
-            $detail["_transm"] = !empty($detail["_trasm"]) ? $detail["_trasm"] : "NULL";
+            $detail["_transm"] = !empty($detail["_transm"]) ? $detail["_transm"] : "NULL";
             $detail["_emClass"] = !empty($detail["_emClass"]) ? "'$detail[_emClass]'" : "NULL";//String
             $detail["_fuelTypeID"] = !empty($detail["_fuelTypeID"]) ? "'$detail[_fuelTypeID]'" : "O";//String OTHER
             $detail["_gearingTypeId"] = !empty($detail["_gearingTypeId"]) ? "'$detail[_gearingTypeId]'" : "NULL";//String
@@ -117,13 +118,13 @@ class DataDispatcher{
 
             //Automatic Quotess
             $querystr = "INSERT INTO CarDetail (codall, buildPeriod, version, powerKW, powerPS, noOfSeats, gears, ccm, cylinders, weight, consumptionMixed, consumptionCity, consumptionHighway, co2EmissionMixed, emClass, transm, idModel, fuelTypeID, gearingTypeID, month, year)
-            VALUES ($detail[_codall], $detail[_buildPeriod], $detail[_version], $detail[_powerKW], $detail[_powerPS], $detail[_noOfSeats], $detail[_gears], $detail[_ccm], $detail[_cylinders], $detail[_weight], $detail[_consumptionMixed], $detail[_consumptionCity], $detail[_consumptionHighway], $detail[_co2EmissionMixed], $detail[_transm],$detail[_emClass], $mdp[modelID], $detail[_fuelTypeID], $detail[_gearingTypeId], $mdp[month], $mdp[year]);";
+            VALUES ($detail[_codall], $detail[_buildPeriod], $detail[_version], $detail[_powerKW], $detail[_powerPS], $detail[_noOfSeats], $detail[_gears], $detail[_ccm], $detail[_cylinders], $detail[_weight], $detail[_consumptionMixed], $detail[_consumptionCity], $detail[_consumptionHighway], $detail[_co2EmissionMixed], $detail[_emClass],$detail[_transm], $mdp[modelID], $detail[_fuelTypeID], $detail[_gearingTypeId], $mdp[month], $mdp[year]);";
             $this->verifyInsert($this->insertQuery($querystr),$querystr);
         }
     }
 
     /**
-     * 
+     * Funzione che dato il result di una query di insert, ne verifica l'esito, ed in caso negativo stampa la query , e modifica header a 404 error
      */
     private function verifyInsert($res,$querystr){
         if(!$res){
@@ -134,11 +135,39 @@ class DataDispatcher{
         }
     }
 
+
+    /**
+     * Metodo che stampa i datiJS da AS24 delle moto
+     */
+    public function getStaticDataJsMoto(){
+        $data = $this->makeHTTPRequest("https://www.autoscout24.it/offerb2c/data/Mdw/StaticData/StaticDataJs?atype=B");
+        $data = str_replace("var staticData=","",$data);
+        print_r($data);
+    }
+
+    /**
+     * Metodo che posta sul DB i dati delle moto
+     */
+    public function postMoto($makes){
+        foreach($makes as $make){
+            $querystr = "INSERT INTO MotoMake (makeID, makeName) VALUES ('$make[Id]', '$make[MakeName]');";
+            $this->verifyInsert($this->insertQuery($querystr),$querystr);
+            foreach($make["Models"] as $model){
+                $querystr = "INSERT INTO MotoModel (modelID, modelName, makeID) VALUES ('$model[Id]', '$model[ModelName]', '$make[Id]');";
+                $this->verifyInsert($this->insertQuery($querystr),$querystr);
+            }
+        }
+    }
+
 }
 
 $dd= new DataDispatcher();
 
-if(isset($_GET["ModelsForMake"])){
+if(isset($_GET["staticDataJSMoto"])){
+    $dd->getStaticDataJsMoto();
+}elseif(isset($_GET["postMoto"])){
+    $dd->postMoto($_POST["makes"]);
+}if(isset($_GET["ModelsForMake"])){
     $dd->getModelsForMake();
 }elseif(isset($_GET["staticDataJS"])){
     $dd->getStaticDataJs();

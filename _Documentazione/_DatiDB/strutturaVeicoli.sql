@@ -1,3 +1,19 @@
+CREATE TABLE MotoMake
+(
+    makeID VARCHAR(6) PRIMARY KEY,
+    makeName VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE MotoModel
+(
+    modelID VARCHAR(5) PRIMARY KEY,
+    makeID VARCHAR(6) NOT NULL,
+    modelName VARCHAR(50) NOT NULL,
+    FOREIGN KEY (makeID) REFERENCES MotoMake (makeID)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
 CREATE TABLE CarMake
 (
     makeID VARCHAR(5) PRIMARY KEY,
@@ -24,7 +40,8 @@ CREATE TABLE GearingType
 
 CREATE TABLE CarModel
 (
-    idModel VARCHAR(10) PRIMARY KEY,
+    idModel VARCHAR(8) PRIMARY KEY,
+    modelName VARCHAR(25) NOT NULL,
     noOfDoors INTEGER(1) NOT NULL,
     makeID VARCHAR(5) NOT NULL,
     bodyTypeID VARCHAR(2) NOT NULL,
@@ -35,7 +52,7 @@ CREATE TABLE CarModel
 
 CREATE TABLE Production
 (
-    idModel VARCHAR(10),
+    idModel VARCHAR(8),
     month CHAR(2),
     year CHAR(4),
     PRIMARY KEY (idModel, month, year),
@@ -48,10 +65,10 @@ CREATE TABLE CarDetail
 (
     codall VARCHAR(6),
     buildPeriod VARCHAR(50),
-    version VARCHAR(100) ,
-    powerKW INTEGER ,
-    powerPS INTEGER ,
-    noOfSeats SMALLINT ,
+    version VARCHAR(100),
+    powerKW INTEGER,
+    powerPS INTEGER,
+    noOfSeats SMALLINT,
     gears SMALLINT,
     ccm DOUBLE PRECISION,
     cylinders SMALLINT,
@@ -62,9 +79,9 @@ CREATE TABLE CarDetail
     co2EmissionMixed DOUBLE PRECISION,
     emClass VARCHAR(10),
     transm INTEGER,
-    idModel VARCHAR(10) NOT NULL,
-    fuelTypeID CHAR(1) ,
-    gearingTypeID CHAR(1) ,
+    idModel VARCHAR(8) NOT NULL,
+    fuelTypeID CHAR(1) NOT NULL,
+    gearingTypeID CHAR(1),
     month CHAR(2) NOT NULL,
     year CHAR(4) NOT NULL,
     PRIMARY KEY (idModel, month, year, version, codall, buildPeriod, fuelTypeID),
