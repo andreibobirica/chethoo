@@ -1,0 +1,40 @@
+Noi in questo progetto useremo typescript solo come linguaggio di programmazione e ne useremo le sue funzionalità.
+Non useremo Node.js e neppure npm (gran parte delle volte)
+
+Per partire ad utilizzare un progetto in typescript bisogno
+seguire i passaggi di installazione ed utilizzo
+
+INSTALLAZIONE
+sudo npm install -g typescript
+
+Non bisogna creare un nuovo progetto con
+npm init
+
+Bisogna successivamente modificare e creare il tsconfig.json come segue:
+{ "compilerOptions": { "outDir": "./built", "allowJs": true, "target": "ES6", "module": "es6", "allowSyntheticDefaultImports": true }, "include": ["./src/**/*"] }
+
+Una volta fatto questo si avranno tutti i file all'interno di src mentre i compilati li si avrà in built, con la stessa gerarchia tra loro
+
+A questo punto bisogna installare jquery
+npm i --save-dev @types/jquery
+
+Questo passaggio è fondamentale perchè così il compilatore ci darà giuste le istruzioni con jquery
+
+ATTENZIONE, qui abbiamo finito
+NON bisogna immettere import $ from "jquery"; All'interno di ogni file
+NON bisogna importare la dipendenza appena installata.
+L'import e i packege fuzionano solamente se si usa NODE.JS
+
+Facciamo partire il compilatore watcher dalla main directory, dove c'è tsconfig.json
+tsc --watch
+
+Nel head del html
+bisogna aggiungere il main file js e il cdm a jquery
+<head> <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"> </script> <script type="module" src="./built/index.js"></script> </head>
+
+Da adesso una volta incluso il file principale non servirà includere gli altri file nel header del HTML, verranno presi in automatico
+
+Attenzione, quando si utilizzeranno gli import nei file ts, ci si dovrà ricordare che si deve immettere anche l'estensione JS
+import {Manager} from "./Manager.js";
+
+Adesso funzionerà tutto

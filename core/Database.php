@@ -48,25 +48,4 @@ class Database
     {
         return $this->conn;
     }
-
-    public function sanitizeString($arrayOfString){
-        $admited = "abcdefghijklmnopqrstuvwxyz";
-        $admited .= "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        $admited .= "0123456789";
-        $admited .= "áéíñóúü¿¡ÁÉÍÑÓÚÜè+ùòà,.-é*§ç°;:_[]@#{}€$!/ ";
-
-        $stringsReturn = array();
-        foreach($arrayOfString as $index => $string){
-            if(!empty($string)){
-                for ($pos = 0; $pos < strlen($string); $pos++) {
-                    $car = substr($string, $pos, 1);
-                    if (strpos($admited, $car) === false){
-                        $string = str_replace($car,' ',$string);
-                    }
-                }
-            }
-            $stringsReturn[$index]=$string;
-        }
-        return $stringsReturn;
-    }
 }
