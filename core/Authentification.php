@@ -1,38 +1,29 @@
 <?php
-
-
-/**
- * $email = 'myname@gmail.com';
- *$emailSanitized = filter_var($email, FILTER_SANITIZE_EMAIL);
- */
-
-
-
 include_once "Database.php";
 /**
  * Class Authentification that serves server side request to confirm login and registration process
  */
 class Authentification
 {
+    //Variabile di accesso al DB
     private $db = null;
 
     public function __CONSTRUCT()
-    {
-        $this->db = new Database();
+    {$this->db = new Database();}
+
+    public function makeLogin(string $email,string $pass){
+
     }
 
     /**
      * Function that make the login with the parameters user and pass
      * @param $user username in login
      * @param $pass password in login
-     * @return boolean , if with that function from that moment we are loged in, Returns true if we estabilished a new log in connection, or false if we not do so
-     * if we return false the motivation could be a validation of character not correct, or esentialy we are not be able to log in cause the incorect email or pass
-     */
+    */
     function login($email, $pass)
     {
-        
         //Controll if we are not already loged in
-        if (!isset($_SESSION["loginAccount"]) || empty($_SESSION["loginAccount"])) {
+        if (!isset($_SESSION["login"]) || empty($_SESSION["login"])) {
             //Traditional login with email and pass to the DB
 
             //Validdate input credential
