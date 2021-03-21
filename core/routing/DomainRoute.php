@@ -1,35 +1,65 @@
 <?php
 
 /**
- * La classe DomainRoute fornisce dei metodi di classe statici capaci di fornire informazioni relative
+ * La classe DomainRoute fornisce dei metodi capaci di fornire informazioni relative
  * al dominio e al sottodominio.
  * 
  */
 
 class DomainRoute{
 
+    //Attributo stringa o boolean contenente il nome del sottodominio o il suo stato
+    private $subdomain = null;
+
     /**
-     * Data una stringa detta subdomain, già verificata e controllatane l'autenticità:
-     * Si controlla se la stringa fa parte di termini riservati.
-     * Se fa parte di termini riservati viene ritornato FALSE
-     * Se non fa parte di termini riservati viene successivamente
-     * effettuato un controllo, per vedere se il subdomain è contanuto all'interno del 
-     * DATABASE.
-     * Se non è contenuto nel database viene ritornato TRUE
-     * Se     è contenuto nel database viene ritornato il suo valore medesimo.
+     * Metodo costruttore, con parametri di default:
+     * Si occupa di definire l'attributo subdomain, invoca il metodo privato calculateSubdomain
+     * con parametri di defualt la variabile globale $_SERVER['SERVER_NAME'] e la macro DOMAIN
+     * Con parametri specificati, invoca la funzione calculateSubdomain con $uridomain e $domain
      */
-    public static function verifySubdomain($subdomain){
-         //VERIFICA NEL DATABASE
-        //Verifica se il sottodominio è veritiero
-        if($subdomain=="marco")
-        return "marco";
-        //prova
-        $reserved = array("api", "www", "admin", "mail");
-        return !in_array($subdomain,$reserved); 
+    public function __construct($uridomain=1,$domain=1) {
+        if($uridomain && $domain)
+        $this->subdomain = $this->calculateSubdomain($_SERVER['SERVER_NAME'],DOMAIN);
+        else
+        $this->subdomain = $this->calculateSubdomain($uridomain,$domain);
+
     }
 
+    /**
+     * Metodo GET
+     * Restituisce l'attributo subdomain, stringa contenente il nome del sottodominio
+     */
+    public function getSubdomain(){
+        return $this->subdomain;
+    }
 
     /**
+     * Data una stringa detta subdomain
+     * Si controlla se la stringa fa parte di termini riservati.
+     * Se fa parte di termini riservati viene ritornato TRUE
+     * Se non fa parte di termini riservati viene ritornato FALSE
+     */
+    public function verifySubdomainReserved($subdomain){
+       $reserved = array("api", "www", "admin", "mail");
+       return in_array($subdomain,$reserved); 
+    }
+
+    /**
+     * Data una stringa detta subdomain
+     * Si controlla se la stringa è contenuta nel DB come sottodominio autorizzato
+     * Se     è contenuto ritorna TRUE
+     * Se non è contenuto ritorna FALSE
+     */
+    public function verifySubdomainInDB($subdomain){
+        //VERIFICA NEL DATABASE
+       //Verifica se il sottodominio è veritiero
+       if($subdomain=="marco")
+       return true;
+   }
+
+
+    /**
+     * Metodo privato, serve per calcolare il subdomain e definirlo.
      * Date due stringe come parametro:
      * $uridomain : dominio intero preso dalla URI
      * $domain : dominio teorico del sito
@@ -44,21 +74,21 @@ class DomainRoute{
      * o restituisce il sottodominio più piccolo se quello più grande è chethoo.it
      * o restituisce false in tutti gli altri casi
      */
-    public static function getSubdomain($uridomain,$domain){
+    private function calculateSubdomain($uridomain,$domain){
         $arrayDomain = explode(".",$domain);
         $arrayUriDomain = explode(".",$uridomain);
         //print_r($arrayDomain);
         //print("</br>");
         //print_r($arrayUriDomain);
         //print("</br>");
-        //print_r(DomainRoute::arrayExceptIndex($arrayUriDomain,0));
+        //print_r($this->arrayExceptIndex($arrayUriDomain,0));
 
         //caso chethoo.it
         if($arrayDomain===$arrayUriDomain){
             return true;
         }
         //caso api.chethoo.it
-        elseif(DomainRoute::arrayExceptIndex($arrayUriDomain,0)===$arrayDomain){
+        elseif($this->arrayExceptIndex($arrayUriDomain,0)===$arrayDomain){
             return $arrayUriDomain[0];
         }
         //caso errore o etc, ciao.api.chethoo.it
@@ -70,7 +100,7 @@ class DomainRoute{
      * Funzione che dato un array, lo restituisce per intero, tranne l'elemento specificato dal index
      * Nel processo ne ridefinisce anche gli indici.
      */
-    public static function arrayExceptIndex($array, $index){
+    private function arrayExceptIndex($array, $index){
         unset($array[$index]);
         $array = array_merge($array);
         return $array;
