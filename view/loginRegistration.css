@@ -4,6 +4,17 @@ input.form-control {
   margin-left: 20px;
 }
 
+.card{
+  border-radius: 35px;
+  background-color: transparent;
+  
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.card .card-body{
+  padding: 3.3em;
+}
+
 .card .card-body .card-title {
   margin-bottom: 30px;
 }
@@ -13,10 +24,15 @@ input.form-control {
   padding: 4px;
   font-size: 17px;
   margin-bottom: 20px;
+  background-color:rgb(0, 27, 100);
 }
 
 .card .card-body #login-button .fas.fa-sign-in-alt {
   margin-left: 10px;
+}
+
+#password-forgot a{
+  color: rgb(0, 27, 100);
 }
 
 .card .card-body #password-forgot {

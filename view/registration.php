@@ -19,17 +19,32 @@
                 <div class="card">
                     <div class="card-body">
                         <form role="form">
-                            <h1 class="card-title text-center">LOGIN</h1>
+                            <h1 class="card-title text-center">REGISTRAZIONE</h1>
                             <div class="form-group float-label-control">
                                 <span class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></span>                             
+                                <input type="text" class="form-control" placeholder="Nome">
+                            </div>
+                            <div class="form-group float-label-control">
+                                <span class="input-group-addon"><i class="fa fa-user" aria-hidden="true"></i></span>                             
+                                <input type="text" class="form-control" placeholder="Cognome">
+                            </div>
+                            <div class="form-group float-label-control">
+                                <span class="input-group-addon"><i class="fa fa-map-marker-alt" aria-hidden="true"></i></span>                             
+                                <input type="number" class="form-control" placeholder="C.A.P">
+                            </div>
+                            <div class="form-group float-label-control">
+                                <span class="input-group-addon"><i class="fa fa-envelope" aria-hidden="true"></i></span>                             
                                 <input type="email" class="form-control" placeholder="Email">
                             </div>
                             <div class="form-group float-label-control">
                                 <span class="input-group-addon"><i class="fas fa-lock"></i></span>
                                 <input type="password" class="form-control" placeholder="Password">
                             </div>
-                            <h6 id="password-forgot"><a href="#">Hai dimenticato la password ?</a></h6>
-                            <button id="login-button" type="button" class="btn btn-primary btn-lg btn-block">ENTRA<i class="fas fa-sign-in-alt"></i></button>
+                            <div class="form-group float-label-control">
+                                <span class="input-group-addon"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" placeholder="Ripetere password">
+                            </div>
+                            <button id="login-button" type="button" class="btn btn-primary btn-lg btn-block">REGISTRATI<i class="fas fa-sign-in-alt"></i></button>
                         </form>
                     </div>
                         

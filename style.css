@@ -1,9 +1,10 @@
 input.form-control {
-  -webkit-box-shadow: none !important;
-          box-shadow: none !important;
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  border-radius: 0px;
-  padding: 0px;
+  border-radius: 5px;
+  padding-left: 5px;
+}
+
+body{
+  background-image: url("images/buy-car.png");
+  background-repeat: no-repeat;
+  background-size: cover;
 }
