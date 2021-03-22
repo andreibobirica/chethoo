@@ -1,0 +1,10 @@
+input.form-control {
+  border-radius: 5px;
+  padding-left: 5px;
+}
+
+body{
+  background-image: url("images/buy-car.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
