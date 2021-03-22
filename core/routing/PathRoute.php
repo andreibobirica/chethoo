@@ -30,7 +30,7 @@ class PathRoute{
    * Metodo add a lista pubblico 
    * capace di aggiungere un oggetto routePath al array $routes.
    */
-  public function add($expression, $function, $method = 'get'){
+  public function add(string $expression, callable $function, string $method = 'get'):void{
     array_push($this->routes,Array(
       'expression' => $expression,
       'function' => $function,
@@ -42,7 +42,7 @@ class PathRoute{
    * Metodo SET pubblico
    * Definisce e sovraccarica la routePath 404 pathNotFound
    */
-  public function pathNotFound($function){
+  public function pathNotFound(callable $function):void{
     $this->pathNotFound = $function;
   }
 
@@ -50,7 +50,7 @@ class PathRoute{
    * Metodo SET pubblico
    * Ridefinisce la funzione methodNotAllowed
    */
-  public function methodNotAllowed($function){
+  public function methodNotAllowed(callable $function):void{
     $this->methodNotAllowed = $function;
   }
 
@@ -60,7 +60,7 @@ class PathRoute{
    * Fa ulteriori verifiche in base al metodo http.
    * In alternativa se non trova nessuna routepath esegue la pathNotFound.
    */
-  public function run($basepath = '/'){
+  public function run(string $basepath = '/'):void{
 
     // Parse current url
     $parsed_url = parse_url($_SERVER['REQUEST_URI']);//Parse Uri

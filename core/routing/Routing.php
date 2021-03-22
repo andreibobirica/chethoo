@@ -60,34 +60,20 @@ class Routing{
     }
 
     /**Metodo run che fa partire il processo di routing */
-    public function run(){
-        //caso eseguito sempre
+    public function run():void{
         $this->casoEseguitoSempre();
 
-        //Caso dominio BASE es chethoo.it
-        if($this->subdomain===true){
-            $this->casoBase();
-        }
-        //Caso subdomain errore es c.ciao.ciao.chethoo.it
-        elseif($this->subdomain===false){
+        if($this->domainRoute->existsErrorDomain())
             $this->casoSubdomainErrore();
-        }
-        //Caso in cui è presente un subdomain valido sintaticamente
-        else{
-            //caso subdominio riservato
-            if($this->domainRoute->verifySubdomainReserved($this->subdomain)){
+        elseif($this->domainRoute->existsSubdomain()){
+            if($this->domainRoute->verifySubdomainReserved())
                 $this->casoSubdomainRiservato($this->subdomain);
-            }
-            else{
-                //caso subdomain non presente in DB
-                if($this->domainRoute->verifySubdomainInDB($this->subdomain)){
-                    $this->casoSubdomainInDB($this->subdomain);
-                }
-                //caso subdomnio     presente in db
-                else{
-                    $this->casoSubdomainNonInDB($this->subdomain);
-                }
-            }
+            elseif($this->domainRoute->verifySubdomainInDB())
+                $this->casoSubdomainInDB($this->subdomain);
+            else
+                $this->casoSubdomainNonInDB($this->subdomain);
+        }else{
+            $this->casoBase();
         }
 
         // Run the Router with the given Basepath
@@ -98,19 +84,17 @@ class Routing{
     /**
      * Funzione eseguita sempre in ogni caso ed in ogni sottodominio
      */
-    private function casoEseguitoSempre(){
+    private function casoEseguitoSempre():void{
         //DA DEFINIRE LA 404
-
-        //PAGINE SEMPRE RAGGIUNGIBILI
-        $this->pathRoute->add('/logout',function(){
-            echo "Sei sicuro di voler uscire? :-)";
+        $this->pathRoute->add('/login/',function(){
+            echo "Caricamento processo di login o registrazione";
         });
     }
 
     /**
      * Funzione eseguita nel caso base in cui il dominio è chethoo.it senza sottodomini, e senza sottodomini errati
      */
-    private function casoBase(){
+    private function casoBase():void{
         // Add base route (startpage)
         $this->pathRoute->add('/',function(){
         echo 'Welcome to caso base, sei sulla pagina di ricerca :-)';
@@ -129,7 +113,7 @@ class Routing{
     /**
      * Funzione eseguita in caso di errore presenti nel sottodominio, come per esempio ciao.mamma.chethoo.it
      */
-    private function casoSubdomainErrore(){
+    private function casoSubdomainErrore():void{
         print("false, errore subdominio errore 404");
     }
 
@@ -139,7 +123,7 @@ class Routing{
      * Il parametro $subdomain serve appunto a tenere traccia nel valore del subdomain, e reindirizzarlo perso il giusto 
      * servizio.
      */
-    private function casoSubdomainRiservato($subdomain){
+    private function casoSubdomainRiservato(string $subdomain):void{
         //REINDIRIZZAMENTO SU SERVIZIO RISERVATO
         print("subdomain riservato");
     }
@@ -151,7 +135,7 @@ class Routing{
      * Il reindirizzamento può avvenire in base al parametro $subdomain
      * 
      */
-    private function casoSubdomainNonInDB($subdomain){
+    private function casoSubdomainNonInDB(string $subdomain):void{
         //REINDIRIZZAMENTO SU pagina 404
         print("subdomain non valido da DB, errore 404");
     }
@@ -162,7 +146,7 @@ class Routing{
      * e quindi è valida.
      * Il reindirizzamento può avvenire in base al parametro $subdomain
      */
-    private function casoSubdomainInDB($subdomain){
+    private function casoSubdomainInDB(string $subdomain):void{
         //REINDIRIZZAMENTO SU pagina specifica.
         print("subdomain valido da DB");
         $this->pathRoute->add('/profile/',function(){

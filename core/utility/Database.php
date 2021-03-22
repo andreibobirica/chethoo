@@ -51,41 +51,52 @@ class Database
             $result = $this->conn->query($str);
             return $result;
         }
+        return false;
     }
 
     /**
-     * Metodo che dato un arry di stringhe sotto forma di SQL le esegue una ad una
-     * In caso di errore in una delle Query SQL si blocca e ritorna un booleano 
-     * @return true in caso in cui le querry siano state eseguite con successo
-     * @return false in caso in cui ci sia stato un qualunque errore.
-     * Questo metodo non è in grado di ritornare i valori delle query ed è ideale 
-     * per querry di Inserimento e modifica
+     * Metodo che esegue più querry in successione.
+     * Data un array di stringhe SQL questo metodo ne esegue la query su
+     * ciascuno e ne salva per ciascuno il risultato dentor un array con gli stessi 
+     * indici del array $sqls;
+     * Nel caso una query sia fallita le altre verrano comunque eseguite.
+     * @param array $sqls stringhe rappresentanti querry SQL
+     * @return $results array di risulati di querry SQL 
      */
-    public function querys(array $sqls):boolean{
-        $failed = false;
-        for ($i=0; $i < siezeof($sqls) && !$failed; $i++) {
-            $sql = $sqls[$i];
+    public function querys(array $sqls):array{
+        //array dei risultati delle query
+        $results = array();
+        foreach($sqls as $i => $sql){
             if (isset($sql) && !empty($sql))
-            if(!$this->conn->query($sql))
-            $failed = true;
+            array_push($results,$this->conn->query($sql));
         }
-        return !$failed;
+        return $results;
     }
 
 
     /**
-     * Metodo che esegue in un blocco di transazione un array di stringhe di querry SQL;
-     * Inizialmente disabilita l'autocommit, successivamente esegue le querry attraverso la funzione querys
-     * successivamente esegue il commit.
-     * Ne ripristina lo stato di autocommit alla fine.
-     * @return esito del inserimento && esito del commit, se true tutto andato bene
+     * Metodo che data un array di stringhe, interpretabili come array di querry da eseguire:
+     * Questo metodo lo esegue in un blocco di tansazione, se c'è un fallimento, effettua il rollback,
+     * Altrimenti effettua il commit.
+     * @param array $sqls stringhe rappresentanti querry SQL
+     * @return $results array di risulati di querry SQL 
      */
-    public function transactionQuerys(array $sqls):boolean{
+    public function transactionQuerys(array $sqls):array{
         $this->conn->autocommit(FALSE);
-        $notfailed = $this->querys($sqls);
-        $notfailed = ($notfailed && !$this->conn->commit());
+        $results = $this->querys($sqls);
+        //Se ne esiste almeno una fallita, fa rollback, altrimenti fa commit
+        in_array(false,$results) ? $this->conn->rollback() : $this->conn->commit();
         $this->conn->autocommit(TRUE);
-        return $notfailed;
+        return $results;
+    }
+
+    /**
+     * Metodo che verifica se nel array di risultati delle query, è presente qualche errore.
+     * @param $result array di risultati da query
+     * @return bool true se tutti i risultati sono consistenti, false se esiste almeno une errore
+     */
+    public function verifyResults(array $results):bool{
+        return in_array(false,$results);
     }
 
 
@@ -102,3 +113,4 @@ class Database
     public function getConn():mixed
     {return $this->conn;}
 }
+
