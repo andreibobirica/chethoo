@@ -87,7 +87,10 @@ class Routing{
     private function casoEseguitoSempre():void{
         //DA DEFINIRE LA 404
         $this->pathRoute->add('/login/',function(){
-            echo "Caricamento processo di login o registrazione";
+            include_once("./core/view/login.php");
+        });
+        $this->pathRoute->add('/registration/',function(){
+            include_once("./core/view/registration.php");
         });
     }
 

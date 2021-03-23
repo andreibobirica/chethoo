@@ -4,7 +4,7 @@ input.form-control {
 }
 
 body{
-  background-image: url("images/buy-car.png");
+  background-image: url("../../core/view/images/buy-car.png");
   background-repeat: no-repeat;
   background-size: cover;
 }
