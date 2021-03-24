@@ -4,6 +4,10 @@ input.form-control {
   margin-left: 20px;
 }
 
+body{
+  background-image: url("../../../core/view/login/images/buy-car.png");
+}
+
 .card{
   border-radius: 35px;
   background-color: transparent;

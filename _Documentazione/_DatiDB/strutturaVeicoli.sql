@@ -99,3 +99,45 @@ CREATE TABLE CarDetail
         ON UPDATE CASCADE
         ON DELETE NO ACTION
 );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE TABLE User
+(
+    email VARCHAR(255) PRIMARY KEY,
+    pass VARCHAR(60) NOT NULL
+);
+
+CREATE TABLE Client
+(
+    user VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    surname VARCHAR(50) NOT NULL,
+    FOREIGN KEY (user) REFERENCES User (email)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Seller
+(
+    user VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    surname VARCHAR(50) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    shopname VARCHAR(255) NOT NULL,
+    PI char(11) NOT NULL UNIQUE,
+    FOREIGN KEY (user) REFERENCES User (email)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
