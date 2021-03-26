@@ -41,8 +41,8 @@
  */
 
  //Include neccessari
- include_once('./core/routing/DomainRoute.php');
- include_once('./core/routing/PathRoute.php');
+ include_once('core/routing/DomainRoute.php');
+ include_once('core/routing/PathRoute.php');
 
 class Routing{
     //stringa o booleano che rappresenta nome o stato del sottodomino e dominio
@@ -87,7 +87,7 @@ class Routing{
     private function casoEseguitoSempre():void{
         //DA DEFINIRE LA 404
         $this->pathRoute->add('/login/',function(){
-            include_once("./core/view/login/loginSkeletron.php");
+            include_once("core/view/login/makeLogin.php");
         });
     }
 

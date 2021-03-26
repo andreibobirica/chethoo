@@ -9,6 +9,8 @@ if(session_status() == PHP_SESSION_NONE){
     //if session has not started
     session_start();
 }
+//Variabile globale
+global $domain, $httpsec, $uridomain;
 
 //Algoritmo di Routing Domain e Path
 include_once('./core/routing/Routing.php');

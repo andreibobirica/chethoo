@@ -29,6 +29,9 @@ class DomainRoute{
             $this->uridomain = $uridomain;
             $this->domain = $domain;
         }
+        $GLOBALS["domain"] = $this->domain;//Variabile globale domain
+        $GLOBALS["httpsec"] = $this->getHTTPSec();//variabile glovale httpsec
+        $GLOBALS["uridomain"] = $this->getHTTPSec()."://".$this->domain."/";//variabile glovale "https://domain/"
         $this->subdomain = $this->calculateSubdomain();
     }
 
@@ -46,6 +49,14 @@ class DomainRoute{
      */
     public function getDomain():string{
         return $this->domain;
+    }
+
+    /**
+     * Metodo GET
+     * Restituisce una stringa rapresentante il metodo di sicurezza del http durante la chiamata
+     */
+    public function getHTTPSec():string{
+        return isset($_SERVER['HTTPS']) ? "https" : "http";
     }
 
     /**
